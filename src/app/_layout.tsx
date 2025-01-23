@@ -33,6 +33,7 @@ export default function () {
 
 const styles = StyleSheet.create({
 	container: {
+		backgroundColor: Colors.background,
 		width: "100%",
 		height: "100%",
 	},
