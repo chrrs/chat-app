@@ -86,8 +86,6 @@ const styles = StyleSheet.create({
 	channels: {
 		display: "flex",
 		flexDirection: "column",
-		gap: 8,
-
-		marginBottom: 12,
+		marginBottom: 24,
 	},
 });

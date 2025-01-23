@@ -27,7 +27,7 @@ export const ChannelButton = ({ login, info }: Props) => {
 				</View>
 
 				{info?.stream ? (
-					<Text numberOfLines={1} style={styles.title}>
+					<Text numberOfLines={2} style={styles.title}>
 						{info.stream.title}
 					</Text>
 				) : (
@@ -40,11 +40,11 @@ export const ChannelButton = ({ login, info }: Props) => {
 
 const styles = StyleSheet.create({
 	pressable: {
-		backgroundColor: Colors.secondaryButtonBackground,
-		borderRadius: 8,
-
 		paddingHorizontal: 16,
 		paddingVertical: 12,
+
+		borderBottomWidth: 1,
+		borderBottomColor: Colors.secondaryButtonBackground,
 	},
 
 	header: {
