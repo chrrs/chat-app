@@ -2,25 +2,22 @@ import { ChannelButton } from "@/components/ChannelButton";
 import { useTwitchAuth } from "@/lib/store/auth";
 import type { StreamInfo } from "@/lib/twitch/client";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import {
+	Alert,
+	Button,
+	RefreshControl,
+	ScrollView,
+	StyleSheet,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const CHANNELS = [
-	"fanfan",
-	"ironmouse",
-	"cdawgva",
-	"philza",
-	"tubbo",
-	"hasanabi",
-	"tarik",
-	"chrrrs",
-	"erobb221",
-];
+const CHANNELS = ["ironmouse", "cdawgva", "philza", "tubbo", "chrrrs"];
 
 export default function () {
 	const client = useTwitchAuth((store) => store.client);
 
-	const [channels] = useState(CHANNELS);
+	const [channels, setChannels] = useState(CHANNELS);
 	const [streams, setStreams] = useState({} as Record<string, StreamInfo>);
 	const [refreshing, setRefreshing] = useState(true);
 
@@ -44,6 +41,10 @@ export default function () {
 		setRefreshing(false);
 	}, [channels, client]);
 
+	function addChannel(channel: string) {
+		setChannels((channels) => [...channels, channel]);
+	}
+
 	useEffect(() => {
 		refresh();
 	}, [refresh]);
@@ -61,6 +62,13 @@ export default function () {
 						<ChannelButton key={login} login={login} info={streams[login]} />
 					))}
 				</View>
+
+				<Button
+					title="Add channel..."
+					onPress={() => {
+						Alert.prompt("Add channel", "Enter channel name...", addChannel);
+					}}
+				/>
 			</ScrollView>
 		</SafeAreaView>
 	);
@@ -76,5 +84,7 @@ const styles = StyleSheet.create({
 		display: "flex",
 		flexDirection: "column",
 		gap: 8,
+
+		marginBottom: 12,
 	},
 });
