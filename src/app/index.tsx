@@ -16,6 +16,7 @@ const CHANNELS = ["ironmouse", "cdawgva", "philza", "tubbo", "chrrrs"];
 
 export default function () {
 	const client = useTwitchAuth((store) => store.client);
+	const logout = useTwitchAuth((store) => store.logout);
 
 	const [channels, setChannels] = useState(CHANNELS);
 	const [streams, setStreams] = useState({} as Record<string, StreamInfo>);
@@ -69,6 +70,8 @@ export default function () {
 						Alert.prompt("Add channel", "Enter channel name...", addChannel);
 					}}
 				/>
+
+				<Button title="Sign out" onPress={logout} />
 			</ScrollView>
 		</SafeAreaView>
 	);

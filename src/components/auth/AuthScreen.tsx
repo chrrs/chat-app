@@ -17,18 +17,9 @@ const discovery = {
 	revocationEndpoint: "https://id.twitch.tv/oauth2/revoke",
 };
 
-// FIXME: Hacky workaround for Twitch not accepting `scheme://redirect`.
-function getRedirectUri() {
-	let uri = makeRedirectUri();
-
-	const remappings = {
-		"exp://192.168.50.38:8081": "https://tinyurl.com/mr293vbu",
-		"exp://192.168.178.127:8081": "https://tinyurl.com/55ryd4yp",
-	} as Record<string, string>;
-	uri = remappings[uri] ?? uri;
-
-	return uri;
-}
+// FIXME: Workaround for Twitch not accepting `scheme://redirect`.
+const getRedirectUri = () =>
+	`${process.env.EXPO_PUBLIC_REDIRECT_PROXY}#${makeRedirectUri()}`;
 
 interface Props {
 	onToken: (token: string) => void;
