@@ -1,4 +1,4 @@
-import { EventSubClient } from "./event_sub";
+import { EventSubClient } from "./eventSub";
 import { HelixClient } from "./helix";
 import { Channel } from "./channel";
 import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
