@@ -1,13 +1,13 @@
 import { Colors } from "@/lib/constants/Colors";
-import { Button, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as WebBrowser from "expo-web-browser";
 import {
-	makeRedirectUri,
 	ResponseType,
+	makeRedirectUri,
 	useAuthRequest,
 } from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 import { useEffect } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 WebBrowser.maybeCompleteAuthSession();
 

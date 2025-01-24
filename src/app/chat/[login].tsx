@@ -1,10 +1,10 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView } from "react-native";
 import { BadgeProvider, type Badges } from "@/components/BadgeProvider";
 import { Chat } from "@/components/Chat";
-import { useLocalSearchParams } from "expo-router";
 import { useTwitchAuth } from "@/lib/store/auth";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { KeyboardAvoidingView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function () {
 	const client = useTwitchAuth((store) => store.client);

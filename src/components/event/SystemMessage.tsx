@@ -1,5 +1,5 @@
-import type { ChatEvent } from "@/lib/twitch/event";
 import { Colors } from "@/lib/constants/Colors";
+import type { ChatEvent } from "@/lib/twitch/event";
 import { StyleSheet, Text } from "react-native";
 
 interface Props {

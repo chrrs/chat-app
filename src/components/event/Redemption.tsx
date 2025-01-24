@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
 import { Colors } from "@/lib/constants/Colors";
 import type { ChatEvent } from "@/lib/twitch/event";
+import { StyleSheet, Text, View } from "react-native";
 
 interface Props {
 	event: ChatEvent.Redemption;

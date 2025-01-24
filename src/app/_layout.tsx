@@ -1,9 +1,9 @@
-import { Stack } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { AuthScreen } from "@/components/auth/AuthScreen";
+import { AuthSpinner } from "@/components/auth/AuthSpinner";
 import { Colors } from "@/lib/constants/Colors";
 import { useTwitchAuth } from "@/lib/store/auth";
-import { AuthSpinner } from "@/components/auth/AuthSpinner";
-import { AuthScreen } from "@/components/auth/AuthScreen";
+import { Stack } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 export default function () {
 	const { status, token, setToken } = useTwitchAuth();

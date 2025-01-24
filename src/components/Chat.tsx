@@ -1,17 +1,17 @@
+import { Colors } from "@/lib/constants/Colors";
+import { useTwitchAuth } from "@/lib/store/auth";
+import type { Channel } from "@/lib/twitch/channel";
+import type { ChatEvent } from "@/lib/twitch/event";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+	type StyleProp,
 	StyleSheet,
 	TextInput,
 	View,
-	type StyleProp,
 	type ViewStyle,
 } from "react-native";
 import { BadgeProvider, type Badges } from "./BadgeProvider";
 import { EventList } from "./event/EventList";
-import { Colors } from "@/lib/constants/Colors";
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { ChatEvent } from "@/lib/twitch/event";
-import type { Channel } from "@/lib/twitch/channel";
-import { useTwitchAuth } from "@/lib/store/auth";
 
 interface Props {
 	style?: StyleProp<ViewStyle>;

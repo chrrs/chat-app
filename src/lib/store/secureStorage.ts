@@ -1,5 +1,5 @@
-import type { StateStorage } from "zustand/middleware";
 import * as SecureStore from "expo-secure-store";
+import type { StateStorage } from "zustand/middleware";
 
 export const SecureStorage: StateStorage = {
 	getItem: SecureStore.getItemAsync,

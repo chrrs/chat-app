@@ -1,7 +1,7 @@
+import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
+import { Channel } from "./channel";
 import { EventSubClient } from "./eventSub";
 import { HelixClient } from "./helix";
-import { Channel } from "./channel";
-import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 
 export interface TwitchAuth {
 	clientId: string;

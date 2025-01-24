@@ -1,8 +1,8 @@
+import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 import Emittery from "emittery";
 import type { TwitchClient, UserInfo } from "./client";
 import type { ChatEvent } from "./event";
 import type { NotificationPayload } from "./eventSub";
-import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 
 let systemMessageId = 0;
 

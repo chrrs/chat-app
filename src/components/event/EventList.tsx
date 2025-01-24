@@ -1,5 +1,7 @@
+import { Colors } from "@/lib/constants/Colors";
 import type { ChatEvent } from "@/lib/twitch/event";
 import { FlashList } from "@shopify/flash-list";
+import { useEffect, useRef, useState } from "react";
 import {
 	type NativeScrollEvent,
 	type NativeSyntheticEvent,
@@ -12,10 +14,8 @@ import {
 } from "react-native";
 import { ChatMessage } from "./ChatMessage";
 import { Notice } from "./Notice";
-import { SystemMessage } from "./SystemMessage";
-import { useEffect, useRef, useState } from "react";
-import { Colors } from "@/lib/constants/Colors";
 import { Redemption } from "./Redemption";
+import { SystemMessage } from "./SystemMessage";
 
 interface Props {
 	style?: StyleProp<ViewStyle>;

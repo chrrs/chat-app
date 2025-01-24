@@ -1,6 +1,6 @@
-import { TwitchClient } from "../twitch/client";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { TwitchClient } from "../twitch/client";
 import { SecureStorage } from "./secureStorage";
 
 type Status = "hydrating" | "authenticating" | "ready";
