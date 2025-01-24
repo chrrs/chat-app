@@ -50,15 +50,17 @@ export const EventList = ({ style, events }: Props) => {
 				estimatedItemSize={17}
 				inverted={true}
 				onScroll={onScroll}
+				keyExtractor={(item) => item.id}
+				getItemType={(item) => item.type}
 				renderItem={({ item }) =>
 					item.type === "message" ? (
-						<ChatMessage key={item.id} event={item} />
+						<ChatMessage event={item} />
 					) : item.type === "notice" ? (
-						<Notice key={item.id} event={item} />
+						<Notice event={item} />
 					) : item.type === "redemption" ? (
-						<Redemption key={item.id} event={item} />
+						<Redemption event={item} />
 					) : (
-						<SystemMessage key={item.id} event={item} />
+						<SystemMessage event={item} />
 					)
 				}
 			/>

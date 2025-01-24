@@ -33,8 +33,9 @@ const Badge = ({ badge }: { badge: BadgeIdentifier }) => {
 export const InlineMessage = ({ message }: Props) => {
 	return (
 		<Text style={styles.message}>
-			{message.author.badges.map((badge) => (
-				<Badge key={`${badge.set}/${badge.id}`} badge={badge} />
+			{message.author.badges.map((badge, index) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: badges will never change, and using index here allows FlashList to be faster.
+				<Badge key={index} badge={badge} />
 			))}
 
 			<Text style={[styles.name, { color: message.author.color }]}>
