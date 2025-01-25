@@ -125,11 +125,6 @@ export class EventSubClient {
 				}
 			};
 
-			// Log any errors to the console.
-			ws.onerror = (event) => {
-				console.error(`WS error: ${event}`);
-			};
-
 			// Reconnect if we closed unexpectedly.
 			ws.onclose = (_event) => {
 				this.ws = null;
