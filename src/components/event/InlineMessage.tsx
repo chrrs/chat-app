@@ -1,6 +1,7 @@
 import { Colors } from "@/lib/constants/Colors";
 import type { BadgeIdentifier, ChatMessage } from "@/lib/twitch/event";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { StyleSheet, Text, View } from "react-native";
 import { useBadges } from "../BadgeProvider";
 
 interface Props {
@@ -16,7 +17,13 @@ const Badge = ({ badge }: { badge: BadgeIdentifier }) => {
 	return (
 		<View style={styles.badgeWrapper}>
 			{info ? (
-				<Image style={styles.badge} src={info.image} alt={info.title} />
+				<Image
+					style={styles.badge}
+					cachePolicy="memory"
+					recyclingKey={key}
+					source={info.image}
+					alt={info.title}
+				/>
 			) : (
 				<View
 					style={{
@@ -34,7 +41,8 @@ export const InlineMessage = ({ message }: Props) => {
 	return (
 		<Text style={styles.message}>
 			{message.author.badges.map((badge, index) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: badges will never change, and using index here allows FlashList to be faster.
+				// `badges` will never change, and using index here allows for recycling.
+				// biome-ignore lint/suspicious/noArrayIndexKey:
 				<Badge key={index} badge={badge} />
 			))}
 
