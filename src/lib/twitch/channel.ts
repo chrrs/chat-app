@@ -1,7 +1,7 @@
 import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 import Emittery from "emittery";
 import type { TwitchClient, UserInfo } from "./client";
-import type { ChatEvent } from "./event";
+import type { ChatEvent, ChatMessage, Fragment } from "./event";
 import type { NotificationPayload } from "./eventSub";
 
 let systemMessageId = 0;
@@ -69,6 +69,47 @@ export class Channel {
 		});
 	}
 
+	// biome-ignore lint/suspicious/noExplicitAny: we don't have proper API types.
+	private parseChatMessage(event: any): ChatMessage {
+		return {
+			author: {
+				id: event.chatter_user_id,
+				login: event.chatter_user_login,
+				name: event.chatter_user_name,
+				color: getColor(event.color),
+				badges: event.badges.map((badge: Record<string, string>) => ({
+					set: badge.set_id,
+					id: badge.id,
+				})),
+			},
+			text: event.message.text,
+			// @ts-ignore: FIXME
+			fragments: event.message.fragments.map((fragment) =>
+				fragment.type === "emote"
+					? ({
+							type: "emote",
+							id: fragment.emote.id,
+							name: fragment.text,
+							url: `https://static-cdn.jtvnw.net/emoticons/v2/${fragment.emote.id}/default/light/2.0`,
+						} satisfies Fragment.Emote)
+					: fragment.type === "mention"
+						? ({
+								type: "mention",
+								text: fragment.text,
+								user: {
+									id: fragment.mention.user_id,
+									login: fragment.mention.user_login,
+									name: fragment.mention.user_name,
+								},
+							} satisfies Fragment.Mention)
+						: ({
+								type: "text",
+								text: fragment.text,
+							} satisfies Fragment.Text),
+			),
+		};
+	}
+
 	private onNotification(payload: NotificationPayload) {
 		if (payload?.subscription?.type === "channel.chat.message") {
 			if (payload.event.broadcaster_user_id !== this.info.id) {
@@ -79,21 +120,7 @@ export class Channel {
 				type: "message",
 				id: payload.event.message_id,
 				timestamp: new Date(payload.subscription.created_at),
-				message: {
-					author: {
-						id: payload.event.chatter_user_id,
-						login: payload.event.chatter_user_login,
-						name: payload.event.chatter_user_name,
-						color: getColor(payload.event.color),
-						badges: payload.event.badges.map(
-							(badge: Record<string, string>) => ({
-								set: badge.set_id,
-								id: badge.id,
-							}),
-						),
-					},
-					text: payload.event.message.text,
-				},
+				message: this.parseChatMessage(payload.event),
 			});
 		} else if (payload?.subscription?.type === "channel.chat.notification") {
 			const text =
@@ -107,22 +134,8 @@ export class Channel {
 				timestamp: new Date(payload.subscription.created_at),
 				text,
 				message:
-					payload.event.message && payload.event.message.text.length > 0
-						? {
-								author: {
-									id: payload.event.chatter_user_id,
-									login: payload.event.chatter_user_login,
-									name: payload.event.chatter_user_name,
-									color: getColor(payload.event.color),
-									badges: payload.event.badges.map(
-										(badge: Record<string, string>) => ({
-											set: badge.set_id,
-											id: badge.id,
-										}),
-									),
-								},
-								text: payload.event.message.text,
-							}
+					payload.event.message.text !== ""
+						? this.parseChatMessage(payload.event)
 						: undefined,
 			});
 		} else if (
@@ -160,7 +173,7 @@ export class Channel {
 			set.versions.map((version) => [
 				`${set.set_id}/${version.id}`,
 				{
-					image: version.image_url_2x,
+					url: version.image_url_2x,
 					title: version.title,
 					description: version.description,
 				} satisfies BadgeInfo,

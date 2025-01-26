@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 
 export type BadgeInfo = {
-	image: string;
+	url: string;
 	title: string;
 	description: string;
 };

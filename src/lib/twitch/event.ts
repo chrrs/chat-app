@@ -3,7 +3,30 @@ import type { UserInfo } from "./client";
 export type ChatMessage = {
 	author: Author;
 	text: string;
+	fragments: Fragment.Any[];
 };
+
+export namespace Fragment {
+	export type Text = {
+		type: "text";
+		text: string;
+	};
+
+	export type Emote = {
+		type: "emote";
+		id: string;
+		name: string;
+		url: string;
+	};
+
+	export type Mention = {
+		type: "mention";
+		text: string;
+		user: UserInfo;
+	};
+
+	export type Any = Text | Emote | Mention;
+}
 
 export type BadgeIdentifier = {
 	set: string;

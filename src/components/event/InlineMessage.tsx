@@ -1,5 +1,9 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { BadgeIdentifier, ChatMessage } from "@/lib/twitch/event";
+import type {
+	BadgeIdentifier,
+	ChatMessage,
+	Fragment,
+} from "@/lib/twitch/event";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
 import { useBadges } from "../BadgeProvider";
@@ -21,7 +25,7 @@ const Badge = ({ badge }: { badge: BadgeIdentifier }) => {
 					style={styles.badge}
 					cachePolicy="memory"
 					recyclingKey={key}
-					source={info.image}
+					source={info.url}
 					alt={info.title}
 				/>
 			) : (
@@ -37,20 +41,44 @@ const Badge = ({ badge }: { badge: BadgeIdentifier }) => {
 	);
 };
 
+const Emote = ({ emote }: { emote: Fragment.Emote }) => {
+	return (
+		<View style={styles.emoteWrapper}>
+			<Image
+				style={styles.emote}
+				cachePolicy="memory"
+				recyclingKey={emote.id}
+				source={emote.url}
+				alt={emote.name}
+			/>
+		</View>
+	);
+};
+
 export const InlineMessage = ({ message }: Props) => {
 	return (
 		<Text style={styles.message}>
 			{message.author.badges.map((badge, index) => (
-				// `badges` will never change, and using index here allows for recycling.
-				// biome-ignore lint/suspicious/noArrayIndexKey:
 				<Badge key={index} badge={badge} />
 			))}
-
 			<Text style={[styles.name, { color: message.author.color }]}>
 				{message.author.name}:
 			</Text>
 
-			{` ${message.text}`}
+			<Text>
+				{" "}
+				{message.fragments.map((fragment, index) =>
+					fragment.type === "emote" ? (
+						<Emote key={index} emote={fragment} />
+					) : fragment.type === "mention" ? (
+						<Text key={index} style={styles.mention}>
+							{fragment.text}
+						</Text>
+					) : (
+						<Text key={index}>{fragment.text}</Text>
+					),
+				)}
+			</Text>
 		</Text>
 	);
 };
@@ -72,5 +100,19 @@ const styles = StyleSheet.create({
 		bottom: -3,
 		width: 16,
 		height: 16,
+	},
+
+	emoteWrapper: {
+		width: 20,
+	},
+
+	emote: {
+		bottom: -3,
+		width: 20,
+		height: 20,
+	},
+
+	mention: {
+		fontWeight: "bold",
 	},
 });

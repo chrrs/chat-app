@@ -85,7 +85,7 @@ export class TwitchClient {
 			set.versions.map((version) => [
 				`${set.set_id}/${version.id}`,
 				{
-					image: version.image_url_2x,
+					url: version.image_url_2x,
 					title: version.title,
 					description: version.description,
 				} satisfies BadgeInfo,
