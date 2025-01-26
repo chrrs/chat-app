@@ -132,11 +132,11 @@ export class Channel {
 			this.emitter.emit("event", {
 				type: "redemption",
 				id: payload.event.id,
-				timestamp: new Date(payload.subscription.redeemed_at),
+				timestamp: new Date(payload.event.redeemed_at),
 				by: {
-					id: payload.event.user_user_id,
-					login: payload.event.user_user_login,
-					name: payload.event.user_user_name,
+					id: payload.event.user_id,
+					login: payload.event.user_login,
+					name: payload.event.user_name,
 				},
 				redemption: {
 					id: payload.event.reward.id,
