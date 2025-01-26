@@ -20,4 +20,6 @@ export const Colors = {
 
 	bottomButtonBackground: "#f008",
 	bottomButtonText: "#fff",
+
+	hiddenText: PlatformColor("tertiaryLabel"),
 };

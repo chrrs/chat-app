@@ -18,8 +18,9 @@ const discovery = {
 };
 
 // FIXME: Workaround for Twitch not accepting `scheme://redirect`.
+const redirectUri = makeRedirectUri();
 const getRedirectUri = () =>
-	`${process.env.EXPO_PUBLIC_REDIRECT_PROXY}#${makeRedirectUri()}`;
+	`${process.env.EXPO_PUBLIC_REDIRECT_PROXY}#${redirectUri}`;
 
 interface Props {
 	onToken: (token: string) => void;
@@ -68,6 +69,7 @@ export const AuthScreen = ({ onToken }: Props) => {
 					disabled={!request}
 					onPress={() => promptAsync()}
 				/>
+				<Text style={styles.redirectUri}>Redirect URI: {redirectUri}</Text>
 			</View>
 		</SafeAreaView>
 	);
@@ -96,5 +98,11 @@ const styles = StyleSheet.create({
 		color: Colors.normalText,
 		marginTop: 4,
 		marginBottom: 32,
+	},
+
+	redirectUri: {
+		marginTop: 48,
+		textAlign: "center",
+		color: Colors.hiddenText,
 	},
 });
