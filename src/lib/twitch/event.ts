@@ -46,35 +46,80 @@ export type Reward = {
 };
 
 export namespace ChatEvent {
-	export type Message = {
-		type: "message";
+	type Base = {
 		id: string;
 		timestamp: Date;
+		historical: boolean;
+	};
+
+	export type Message = Base & {
+		type: "message";
 		message: ChatMessage;
 	};
 
-	export type Notice = {
+	export type Notice = Base & {
 		type: "notice";
-		id: string;
-		timestamp: Date;
 		text: string;
 		message?: ChatMessage;
 	};
 
-	export type System = {
+	export type System = Base & {
 		type: "system";
-		id: string;
-		timestamp: Date;
 		text: string;
 	};
 
-	export type Redemption = {
+	export type Redemption = Base & {
 		type: "redemption";
-		id: string;
-		timestamp: Date;
 		by: UserInfo;
 		redemption: Reward;
 	};
 
 	export type Any = Message | Notice | System | Redemption;
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: we don't have proper API types.
+export function parseHelixMessage(event: any): ChatMessage {
+	// FIXME: Sometimes messages end with '󠀀' (\uE0000). Seems to be an anti-spam thing.
+
+	return {
+		author: {
+			id: event.chatter_user_id,
+			login: event.chatter_user_login,
+			name: event.chatter_user_name,
+			color: getNameColor(event.color),
+			badges: event.badges.map((badge: Record<string, string>) => ({
+				set: badge.set_id,
+				id: badge.id,
+			})),
+		},
+		text: event.message.text,
+		// @ts-ignore: FIXME
+		fragments: event.message.fragments.map((fragment) =>
+			fragment.type === "emote"
+				? ({
+						type: "emote",
+						id: fragment.emote.id,
+						name: fragment.text,
+						url: `https://static-cdn.jtvnw.net/emoticons/v2/${fragment.emote.id}/default/light/2.0`,
+					} satisfies Fragment.Emote)
+				: fragment.type === "mention"
+					? ({
+							type: "mention",
+							text: fragment.text,
+							user: {
+								id: fragment.mention.user_id,
+								login: fragment.mention.user_login,
+								name: fragment.mention.user_name,
+							},
+						} satisfies Fragment.Mention)
+					: ({
+							type: "text",
+							text: fragment.text,
+						} satisfies Fragment.Text),
+		),
+	};
+}
+
+export function getNameColor(color: string) {
+	return color.length === 0 ? "gray" : color;
 }

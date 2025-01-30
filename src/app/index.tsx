@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const CHANNELS = ["ironmouse", "cdawgva", "philza", "tubbo", "chrrrs"];
+const CHANNELS = ["ironmouse", "cdawgva", "philza", "tubbo", "chrrrs", "fitmc"];
 
 export default function () {
 	const client = useTwitchAuth((store) => store.client);

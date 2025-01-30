@@ -15,6 +15,11 @@ type Events = {
 	notification: NotificationPayload;
 };
 
+type WebSocketExtensions = {
+	reconnecting: boolean;
+	wasConnected: boolean;
+};
+
 export class EventSubClient {
 	private helix: HelixClient;
 	private ws: WebSocket | null = null;
@@ -95,12 +100,17 @@ export class EventSubClient {
 			}
 
 			// @ts-expect-error: we're setting the reconnecting boolean in the next line.
-			const ws: WebSocket & { reconnecting: boolean } = new WebSocket(
+			const ws: WebSocket & WebSocketExtensions = new WebSocket(
 				url ?? "wss://eventsub.wss.twitch.tv/ws",
 			);
 
 			ws.reconnecting = false;
+			ws.wasConnected = false;
 			this.ws = ws;
+
+			ws.onopen = () => {
+				ws.wasConnected = true;
+			};
 
 			ws.onmessage = (event) => {
 				const message = JSON.parse(event.data);
@@ -128,10 +138,9 @@ export class EventSubClient {
 			// Reconnect if we closed unexpectedly.
 			ws.onclose = (_event) => {
 				this.ws = null;
-				if (!ws.reconnecting) {
-					this.emitter.emit("disconnected");
-					setTimeout(() => this.connect(), 500);
-				}
+
+				if (ws.wasConnected) this.emitter.emit("disconnected");
+				if (!ws.reconnecting) setTimeout(() => this.connect(), 500);
 			};
 		});
 	}

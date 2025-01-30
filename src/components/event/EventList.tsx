@@ -52,17 +52,19 @@ export const EventList = ({ style, events }: Props) => {
 				onScroll={onScroll}
 				keyExtractor={(item) => item.id}
 				getItemType={(item) => item.type}
-				renderItem={({ item }) =>
-					item.type === "message" ? (
-						<ChatMessage event={item} />
-					) : item.type === "notice" ? (
-						<Notice event={item} />
-					) : item.type === "redemption" ? (
-						<Redemption event={item} />
-					) : (
-						<SystemMessage event={item} />
-					)
-				}
+				renderItem={({ item }) => (
+					<View style={{ opacity: item.historical ? 0.6 : undefined }}>
+						{item.type === "message" ? (
+							<ChatMessage event={item} />
+						) : item.type === "notice" ? (
+							<Notice event={item} />
+						) : item.type === "redemption" ? (
+							<Redemption event={item} />
+						) : (
+							<SystemMessage event={item} />
+						)}
+					</View>
+				)}
 			/>
 
 			{!atBottom && (

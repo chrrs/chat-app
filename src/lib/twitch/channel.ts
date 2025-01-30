@@ -1,13 +1,15 @@
 import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 import Emittery from "emittery";
 import type { TwitchClient, UserInfo } from "./client";
-import type { ChatEvent, ChatMessage, Fragment } from "./event";
+import { type ChatEvent, parseHelixMessage } from "./event";
 import type { NotificationPayload } from "./eventSub";
+import { parseIrcEvent } from "./irc";
 
 let systemMessageId = 0;
 
 type Events = {
 	event: ChatEvent.Any;
+	connected: undefined;
 };
 
 export class Channel {
@@ -15,6 +17,8 @@ export class Channel {
 	private emitter = new Emittery<Events>();
 
 	private subscriptions: (() => void)[] = [];
+
+	private lastMessage = new Date(0);
 
 	on: Emittery<Events>["on"] = (event, handler) =>
 		this.emitter.on(event, handler);
@@ -37,6 +41,8 @@ export class Channel {
 		s(on("connected", () => msg("Connected to Twitch.")));
 		s(on("reconnectRequested", () => msg("Twitch asked us to reconnect.")));
 
+		s(on("connected", () => this.emitter.emit("connected")));
+
 		const unsubscribe = this.client.eventSub.subscribe((to) => {
 			const condition = {
 				broadcaster_user_id: info.id,
@@ -55,6 +61,7 @@ export class Channel {
 	}
 
 	close() {
+		this.emitter.clearListeners();
 		for (const unsubscribe of this.subscriptions) {
 			unsubscribe();
 		}
@@ -65,55 +72,35 @@ export class Channel {
 			type: "system",
 			id: `sys_${systemMessageId++}`,
 			timestamp: new Date(),
+			historical: false,
 			text,
 		});
 	}
 
-	// biome-ignore lint/suspicious/noExplicitAny: we don't have proper API types.
-	private parseChatMessage(event: any): ChatMessage {
-		// FIXME: Sometimes messages end with '󠀀' (\uE0000). Seems to be an anti-spam thing.
+	async fetchHistoricEvents(): Promise<ChatEvent.Any[]> {
+		const base = "https://recent-messages.robotty.de/api/v2/recent-messages/";
+		const res = await fetch(
+			`${base}${this.info.login}?before=${Date.now()}&after=${this.lastMessage.getTime()}`,
+		);
 
-		return {
-			author: {
-				id: event.chatter_user_id,
-				login: event.chatter_user_login,
-				name: event.chatter_user_name,
-				color: getColor(event.color),
-				badges: event.badges.map((badge: Record<string, string>) => ({
-					set: badge.set_id,
-					id: badge.id,
-				})),
-			},
-			text: event.message.text,
-			// @ts-ignore: FIXME
-			fragments: event.message.fragments.map((fragment) =>
-				fragment.type === "emote"
-					? ({
-							type: "emote",
-							id: fragment.emote.id,
-							name: fragment.text,
-							url: `https://static-cdn.jtvnw.net/emoticons/v2/${fragment.emote.id}/default/light/2.0`,
-						} satisfies Fragment.Emote)
-					: fragment.type === "mention"
-						? ({
-								type: "mention",
-								text: fragment.text,
-								user: {
-									id: fragment.mention.user_id,
-									login: fragment.mention.user_login,
-									name: fragment.mention.user_name,
-								},
-							} satisfies Fragment.Mention)
-						: ({
-								type: "text",
-								text: fragment.text,
-							} satisfies Fragment.Text),
-			),
-		};
+		const body = await res.json();
+
+		if (!res.ok) {
+			this.addSystemMessage(`Failed to fetch recent messages: ${body.error}`);
+			return [];
+		}
+
+		this.lastMessage = new Date();
+		return body.messages
+			.map(parseIrcEvent)
+			.filter((event: ChatEvent.Any | null) => event !== null);
 	}
 
 	private onNotification(payload: NotificationPayload) {
-		if (payload?.subscription?.type === "channel.chat.message") {
+		const timestamp = new Date();
+		this.lastMessage = timestamp;
+
+		if (payload.subscription.type === "channel.chat.message") {
 			if (payload.event.broadcaster_user_id !== this.info.id) {
 				return;
 			}
@@ -121,10 +108,11 @@ export class Channel {
 			this.emitter.emit("event", {
 				type: "message",
 				id: payload.event.message_id,
-				timestamp: new Date(payload.subscription.created_at),
-				message: this.parseChatMessage(payload.event),
+				timestamp,
+				historical: false,
+				message: parseHelixMessage(payload.event),
 			});
-		} else if (payload?.subscription?.type === "channel.chat.notification") {
+		} else if (payload.subscription.type === "channel.chat.notification") {
 			const text =
 				payload.event.notice_type === "announcement"
 					? "Announcement"
@@ -133,21 +121,23 @@ export class Channel {
 			this.emitter.emit("event", {
 				type: "notice",
 				id: payload.event.message_id,
-				timestamp: new Date(payload.subscription.created_at),
+				timestamp,
+				historical: false,
 				text,
 				message:
 					payload.event.message.text !== ""
-						? this.parseChatMessage(payload.event)
+						? parseHelixMessage(payload.event)
 						: undefined,
 			});
 		} else if (
-			payload?.subscription?.type ===
+			payload.subscription.type ===
 			"channel.channel_points_custom_reward_redemption.add"
 		) {
 			this.emitter.emit("event", {
 				type: "redemption",
 				id: payload.event.id,
-				timestamp: new Date(payload.event.redeemed_at),
+				timestamp,
+				historical: false,
 				by: {
 					id: payload.event.user_id,
 					login: payload.event.user_login,
@@ -194,8 +184,4 @@ export class Channel {
 			}),
 		});
 	}
-}
-
-function getColor(color: string) {
-	return color.length === 0 ? "gray" : color;
 }
