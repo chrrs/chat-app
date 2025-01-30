@@ -71,6 +71,8 @@ export class Channel {
 
 	// biome-ignore lint/suspicious/noExplicitAny: we don't have proper API types.
 	private parseChatMessage(event: any): ChatMessage {
+		// FIXME: Sometimes messages end with '󠀀' (\uE0000). Seems to be an anti-spam thing.
+
 		return {
 			author: {
 				id: event.chatter_user_id,

@@ -18,18 +18,19 @@ export default function () {
 	const client = useTwitchAuth((store) => store.client);
 	const logout = useTwitchAuth((store) => store.logout);
 
-	const [channels, setChannels] = useState(CHANNELS);
-	const [streams, setStreams] = useState({} as Record<string, StreamInfo>);
+	const [streams, setStreams] = useState(
+		Object.fromEntries(CHANNELS.map((channel) => [channel, {} as StreamInfo])),
+	);
 	const [refreshing, setRefreshing] = useState(true);
 
 	const sortedChannels = useMemo(
 		() =>
-			[...channels].sort((a, b) => {
-				const viewersA = streams[a]?.stream?.viewers;
-				const viewersB = streams[b]?.stream?.viewers;
+			[...Object.keys(streams)].sort((a, b) => {
+				const viewersA = streams[a].stream?.viewers;
+				const viewersB = streams[b].stream?.viewers;
 				return (viewersB ?? -1) - (viewersA ?? -1) || a.localeCompare(b);
 			}),
-		[channels, streams],
+		[streams],
 	);
 
 	const refresh = useCallback(async () => {
@@ -38,17 +39,21 @@ export default function () {
 		}
 
 		setRefreshing(true);
-		setStreams(await client.getStreams(channels));
+		setStreams(await client.getStreams(Object.keys(streams)));
 		setRefreshing(false);
-	}, [channels, client]);
+	}, [streams, client]);
 
-	function addChannel(channel: string) {
-		setChannels((channels) => [...channels, channel]);
-	}
-
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We don't want it to refresh in a loop.
 	useEffect(() => {
 		refresh();
-	}, [refresh]);
+	}, []);
+
+	function addChannel(login: string) {
+		setStreams((streams) => ({ ...streams, [login]: {} }));
+		client?.getStreams([login]).then((res) => {
+			setStreams((streams) => ({ ...streams, [login]: res[login] }));
+		});
+	}
 
 	return (
 		<SafeAreaView>

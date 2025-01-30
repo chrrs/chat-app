@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface Props {
 	login: string;
-	info?: StreamInfo;
+	info: StreamInfo;
 }
 
 export const ChannelButton = ({ login, info }: Props) => {
@@ -14,9 +14,9 @@ export const ChannelButton = ({ login, info }: Props) => {
 		<Link key={login} href={`/chat/${login}`} asChild>
 			<Pressable style={styles.pressable}>
 				<View style={styles.header}>
-					<Text style={styles.name}>{info ? info.name : login}</Text>
+					<Text style={styles.name}>{info.user ? info.user.name : login}</Text>
 
-					{info?.stream && (
+					{info.stream && (
 						<View style={styles.viewersWrapper}>
 							<Text style={{ color: Colors.viewersText }}>
 								{info.stream.viewers.toLocaleString("en-US")}
@@ -26,7 +26,7 @@ export const ChannelButton = ({ login, info }: Props) => {
 					)}
 				</View>
 
-				{info?.stream ? (
+				{info.stream ? (
 					<Text numberOfLines={2} style={styles.title}>
 						{info.stream.title}
 					</Text>

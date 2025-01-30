@@ -15,7 +15,7 @@ export interface UserInfo {
 }
 
 export interface StreamInfo {
-	name: string;
+	user?: UserInfo;
 	stream?: {
 		title: string;
 		game: string;
@@ -96,23 +96,40 @@ export class TwitchClient {
 	}
 
 	async getStreams(logins: string[]): Promise<Record<string, StreamInfo>> {
-		const query = logins.map((login) => `user_login=${login}`).join("&");
-		const res = await this.helix.get(`streams?${query}`);
-		const body = await res.json();
+		const streamsPromise = (async () => {
+			const query = logins.map((login) => `user_login=${login}`).join("&");
+			return await this.helix.get(`streams?${query}`).then((res) => res.json());
+		})();
 
-		// @ts-ignore: FIXME
-		const streams = body.data.map((stream) => [
-			stream.user_login,
-			{
-				name: stream.user_name,
-				stream: {
-					title: stream.title,
-					game: stream.game_name,
-					viewers: stream.viewer_count,
-				},
-			} satisfies StreamInfo,
-		]);
+		const usersPromise = (async () => {
+			const query = logins.map((login) => `login=${login}`).join("&");
+			return await this.helix.get(`users?${query}`).then((res) => res.json());
+		})();
 
-		return Object.fromEntries(streams);
+		const [streams, users] = await Promise.all([streamsPromise, usersPromise]);
+
+		const out = Object.fromEntries(
+			logins.map((login) => [login, {} as StreamInfo]),
+		);
+
+		for (const stream of streams.data) {
+			out[stream.user_login] ??= {};
+			out[stream.user_login].stream = {
+				title: stream.title,
+				game: stream.game_name,
+				viewers: stream.viewer_count,
+			};
+		}
+
+		for (const user of users.data) {
+			out[user.login] ??= {};
+			out[user.login].user = {
+				id: user.id,
+				login: user.login,
+				name: user.display_name,
+			};
+		}
+
+		return out;
 	}
 }
