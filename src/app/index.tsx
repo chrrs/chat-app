@@ -1,7 +1,7 @@
 import { ChannelButton } from "@/components/ChannelButton";
 import { useTwitchAuth } from "@/lib/store/auth";
 import type { StreamInfo } from "@/lib/twitch/client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
 	Alert,
 	Button,
@@ -18,54 +18,59 @@ export default function () {
 	const client = useTwitchAuth((store) => store.client);
 	const logout = useTwitchAuth((store) => store.logout);
 
+	const channelsRef = useRef(CHANNELS);
 	const [streams, setStreams] = useState(
-		Object.fromEntries(CHANNELS.map((channel) => [channel, {} as StreamInfo])),
+		Object.fromEntries(
+			channelsRef.current.map((channel) => [channel, {}]),
+		) as Record<string, StreamInfo>,
 	);
+
 	const [refreshing, setRefreshing] = useState(true);
 
-	const sortedChannels = useMemo(
+	const sortedStreams = useMemo(
 		() =>
-			[...Object.keys(streams)].sort((a, b) => {
-				const viewersA = streams[a].stream?.viewers;
-				const viewersB = streams[b].stream?.viewers;
-				return (viewersB ?? -1) - (viewersA ?? -1) || a.localeCompare(b);
+			[...Object.entries(streams)].sort((a, b) => {
+				const viewersA = a[1].stream?.viewers;
+				const viewersB = b[1].stream?.viewers;
+				return (viewersB ?? -1) - (viewersA ?? -1) || a[0].localeCompare(b[0]);
 			}),
 		[streams],
 	);
 
-	const refresh = useCallback(async () => {
+	const refetchStreams = useCallback(async () => {
 		if (client === null) {
 			return setStreams({});
 		}
 
 		setRefreshing(true);
-		setStreams(await client.getStreams(Object.keys(streams)));
+		setStreams(await client.fetchStreams(channelsRef.current));
 		setRefreshing(false);
-	}, [streams, client]);
+	}, [client]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: We don't want it to refresh in a loop.
-	useEffect(() => {
-		refresh();
-	}, []);
-
-	function addChannel(login: string) {
+	const addChannel = (login: string) => {
+		channelsRef.current = [...channelsRef.current, login];
 		setStreams((streams) => ({ ...streams, [login]: {} }));
-		client?.getStreams([login]).then((res) => {
+
+		client?.fetchStreams([login]).then((res) => {
 			setStreams((streams) => ({ ...streams, [login]: res[login] }));
 		});
-	}
+	};
+
+	useEffect(() => {
+		refetchStreams();
+	}, [refetchStreams]);
 
 	return (
 		<SafeAreaView>
 			<ScrollView
 				style={styles.scroller}
 				refreshControl={
-					<RefreshControl onRefresh={refresh} refreshing={refreshing} />
+					<RefreshControl onRefresh={refetchStreams} refreshing={refreshing} />
 				}
 			>
 				<View style={styles.channels}>
-					{sortedChannels.map((login) => (
-						<ChannelButton key={login} login={login} info={streams[login]} />
+					{sortedStreams.map(([login, info]) => (
+						<ChannelButton key={login} login={login} info={info} />
 					))}
 				</View>
 

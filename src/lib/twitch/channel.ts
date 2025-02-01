@@ -36,7 +36,7 @@ export class Channel {
 		const on = this.client.eventSub.on.bind(this.client.eventSub);
 		const msg = this.addSystemMessage.bind(this);
 
-		s(on("notification", (event) => this.onNotification(event)));
+		s(on("notification", (payload) => this.onEvent(payload)));
 		s(on("disconnected", () => msg("Disconnected from Twitch.")));
 		s(on("connected", () => msg("Connected to Twitch.")));
 		s(on("reconnectRequested", () => msg("Twitch asked us to reconnect.")));
@@ -86,8 +86,7 @@ export class Channel {
 		const body = await res.json();
 
 		if (!res.ok) {
-			this.addSystemMessage(`Failed to fetch recent messages: ${body.error}`);
-			return [];
+			throw new Error(`API error '${body.error}'`, { cause: body });
 		}
 
 		this.lastMessage = new Date();
@@ -96,7 +95,7 @@ export class Channel {
 			.filter((event: ChatEvent.Any | null) => event !== null);
 	}
 
-	private onNotification(payload: NotificationPayload) {
+	private onEvent(payload: NotificationPayload) {
 		const timestamp = new Date();
 		this.lastMessage = timestamp;
 
@@ -153,7 +152,7 @@ export class Channel {
 		}
 	}
 
-	async badges(): Promise<Badges> {
+	async fetchChannelBadges(): Promise<Badges> {
 		const res = await this.client.helix.get(
 			`chat/badges?broadcaster_id=${this.info.id}`,
 		);
@@ -175,7 +174,7 @@ export class Channel {
 		return Object.fromEntries(badges);
 	}
 
-	async send(message: string): Promise<void> {
+	async sendMessage(message: string): Promise<void> {
 		await this.client.helix.post("chat/messages", {
 			body: JSON.stringify({
 				broadcaster_id: this.info.id,

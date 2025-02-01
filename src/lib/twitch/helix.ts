@@ -26,7 +26,7 @@ export class HelixClient {
 			const message = body.message || body.error || res.statusText;
 
 			console.warn(`API error for ${path}: ${message}`);
-			throw new Error(`API error for ${path}: ${message}`, { cause: res });
+			throw new Error(`API error '${message}'`, { cause: res });
 		}
 
 		return res;

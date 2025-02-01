@@ -3,6 +3,7 @@ import { useTwitchAuth } from "@/lib/store/auth";
 import type { Channel } from "@/lib/twitch/channel";
 import type { TwitchClient } from "@/lib/twitch/client";
 import type { ChatEvent } from "@/lib/twitch/event";
+import { eMsg } from "@/lib/util";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	type StyleProp,
@@ -32,10 +33,10 @@ export const Chat = ({ style, login }: Props) => {
 	const sendChatMessage = useCallback(() => {
 		if (channel && input.current) {
 			channel
-				.send(typedMessage)
+				.sendMessage(typedMessage)
 				.catch((err) =>
 					channel?.addSystemMessage(
-						`Failed to fetch channel badges: ${err.message}`,
+						`Could not fetch channel badges: ${eMsg(err)}`,
 					),
 				);
 
@@ -44,52 +45,76 @@ export const Chat = ({ style, login }: Props) => {
 	}, [channel, typedMessage]);
 
 	useEffect(() => {
-		setEvents([]);
 		if (client === null) {
 			return;
 		}
 
+		setEvents([]);
 		(async (client: TwitchClient) => {
-			const channel = await client.getChannel(login);
-			setChannel(channel);
-
-			// Show all incoming events.
-			channel.on("event", (event) => {
-				setEvents((events) => {
-					const updatedEvents = [event, ...events];
-					if (updatedEvents.length > 1000) updatedEvents.pop();
-					return updatedEvents;
-				});
-			});
-
-			// Fetch channel badges.
 			try {
-				const badges = await channel.badges();
-				setChannelBadges(badges);
-			} catch (err) {
-				channel.addSystemMessage(
-					// @ts-expect-error: we know 'message' exists here.
-					`Failed to fetch channel badges: ${err?.message}`,
-				);
-			}
+				const channel = await client.getChannel(login);
+				setChannel(channel);
 
-			// Fetch historic messages when connecting.
-			const fetchHistoricMessages = () =>
-				channel.fetchHistoricEvents().then((historicEvents) => {
+				const addSystemMessage = (message: string) =>
+					channel.addSystemMessage(message);
+
+				// Show all incoming events.
+				channel.on("event", (event) => {
 					setEvents((events) => {
-						const updatedEvents = [...historicEvents, ...events].sort(
-							(a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
-						);
+						const updatedEvents = [event, ...events];
 						if (updatedEvents.length > 1000) updatedEvents.pop();
 						return updatedEvents;
 					});
 				});
 
-			channel.on("connected", () => fetchHistoricMessages());
+				if (client.eventSub.connected) {
+					channel.addSystemMessage("Reusing existing connection to Twitch.");
+				}
 
-			if (client.eventSub.connected) {
-				channel.addSystemMessage("Reusing existing connection to Twitch.");
-				fetchHistoricMessages();
+				// Fetch channel badges. We await here so the historic messages can
+				// use these badges after they're fetched.
+				try {
+					const badges = await channel.fetchChannelBadges();
+					setChannelBadges(badges);
+				} catch (err) {
+					addSystemMessage(`Could not fetch channel badges: ${eMsg(err)}`);
+				}
+
+				// Fetch historic messages when connecting.
+				const fetchHistoricMessages = () =>
+					channel
+						.fetchHistoricEvents()
+						.then((historicEvents) => {
+							setEvents((events) => {
+								const updatedEvents = [...historicEvents, ...events].sort(
+									(a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+								);
+								if (updatedEvents.length > 1000) updatedEvents.pop();
+								return updatedEvents;
+							});
+						})
+						.catch((err) =>
+							addSystemMessage(
+								`Could not fetch historic messages: ${eMsg(err)}`,
+							),
+						);
+
+				channel.on("connected", () => fetchHistoricMessages());
+				if (client.eventSub.connected) {
+					fetchHistoricMessages();
+				}
+			} catch (err) {
+				// Manually add a system message on error
+				setEvents((events) => [
+					...events,
+					{
+						type: "system",
+						id: "system-fail",
+						historical: false,
+						timestamp: new Date(),
+						text: `Could not join channel: ${eMsg(err)}`,
+					},
+				]);
 			}
 		})(client);
 	}, [login, client]);

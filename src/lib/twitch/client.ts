@@ -75,7 +75,7 @@ export class TwitchClient {
 		});
 	}
 
-	async getGlobalBadges(): Promise<Badges> {
+	async fetchGlobalBadges(): Promise<Badges> {
 		const res = await this.helix.get("chat/badges/global");
 		const data = await res.json();
 
@@ -95,7 +95,7 @@ export class TwitchClient {
 		return Object.fromEntries(badges);
 	}
 
-	async getStreams(logins: string[]): Promise<Record<string, StreamInfo>> {
+	async fetchStreams(logins: string[]): Promise<Record<string, StreamInfo>> {
 		const streamsPromise = (async () => {
 			const query = logins.map((login) => `user_login=${login}`).join("&");
 			return await this.helix.get(`streams?${query}`).then((res) => res.json());

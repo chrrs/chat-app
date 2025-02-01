@@ -12,14 +12,21 @@ export default function () {
 	const { login } = useLocalSearchParams();
 
 	useEffect(() => {
-		client?.getGlobalBadges()?.then((badges) => setGlobalBadges(badges));
+		if (client) {
+			client
+				.fetchGlobalBadges()
+				.then((badges) => setGlobalBadges(badges))
+				.catch((error) =>
+					console.error("error while fetching global badges", error),
+				);
+		}
 	}, [client]);
 
 	return (
 		<SafeAreaView>
 			<KeyboardAvoidingView behavior="padding">
 				<BadgeProvider badges={globalBadges}>
-					<Chat login={String(login)} />
+					<Chat key={String(login)} login={String(login)} />
 				</BadgeProvider>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
