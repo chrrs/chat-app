@@ -77,6 +77,10 @@ export class Channel {
 		});
 	}
 
+	get connected() {
+		return this.client.eventSub.connected;
+	}
+
 	async fetchHistoricEvents(): Promise<ChatEvent.Any[]> {
 		const base = "https://recent-messages.robotty.de/api/v2/recent-messages/";
 		const res = await fetch(

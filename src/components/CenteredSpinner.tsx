@@ -1,11 +1,11 @@
 import { Colors } from "@/lib/constants/Colors";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
-export const AuthSpinner = () => {
+export const CenteredSpinner = ({ text }: { text: string }) => {
 	return (
 		<View style={styles.root}>
 			<ActivityIndicator />
-			<Text style={styles.label}>Authenticating...</Text>
+			<Text style={styles.label}>{text}</Text>
 		</View>
 	);
 };

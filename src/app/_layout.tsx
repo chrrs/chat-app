@@ -1,5 +1,5 @@
+import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { AuthScreen } from "@/components/auth/AuthScreen";
-import { AuthSpinner } from "@/components/auth/AuthSpinner";
 import { Colors } from "@/lib/constants/Colors";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { Stack } from "expo-router";
@@ -9,7 +9,7 @@ export default function () {
 	const { status, token, setToken } = useTwitchAuth();
 
 	if (status !== "ready") {
-		return <AuthSpinner />;
+		return <CenteredSpinner text="Authenticating..." />;
 	}
 
 	if (token === null) {
