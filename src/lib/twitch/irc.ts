@@ -15,7 +15,7 @@ type TwitchIrcTags = {
 	"user-id": string;
 	"display-name": string;
 	color?: string;
-	badges?: string;
+	badges: string;
 	"msg-id"?: string;
 	"system-msg"?: string;
 	emotes: string;
@@ -27,33 +27,57 @@ export function parseIrcChatMessage(res: Message<TwitchIrcTags>): ChatMessage {
 	}
 
 	const text = res.params[1];
-	const emotes = res.tags.emotes?.length > 0 ? res.tags.emotes.split("/") : [];
 	const fragments = [] as Fragment.Any[];
-	let index = 0;
 
-	for (const emote of emotes) {
+	const emoteTags =
+		res.tags.emotes?.length > 0 ? res.tags.emotes.split("/") : [];
+	const emotes = [] as {
+		id: string;
+		name: string;
+		start: number;
+		end: number;
+	}[];
+
+	// We need to loop through it once, because emotes can be out-of-order in the
+	// tag. For example: 'a:1-2,8-9/b:4-5'.
+	for (const emote of emoteTags) {
 		const [id, ranges] = emote.split(":", 2);
 		for (const range of ranges.split(",")) {
 			const parts = range.split("-", 2);
-			const [start, end] = [Number(parts[0]), Number(parts[1])];
+			const [start, end] = [Number(parts[0]), Number(parts[1]) + 1];
 
-			if (index < start) {
-				fragments.push({ type: "text", text: text.substring(index, start) });
-			}
-
-			fragments.push({
-				type: "emote",
-				id,
-				name: text.substring(start, end + 1),
-				url: `https://static-cdn.jtvnw.net/emoticons/v2/${id}/default/light/2.0`,
-			});
-			index = end + 1;
+			const name = text.substring(start, end);
+			emotes.push({ id, name, start, end });
 		}
 	}
 
+	emotes.sort((a, b) => a.start - b.start);
+
+	// Then, we can actually split our message into fragments.
+	let index = 0;
+	for (const emote of emotes) {
+		if (index < emote.start) {
+			fragments.push({
+				type: "text",
+				text: text.substring(index, emote.start),
+			});
+		}
+
+		fragments.push({
+			type: "emote",
+			id: emote.id,
+			name: text.substring(emote.start, emote.end),
+			url: `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/light/2.0`,
+		});
+		index = emote.end;
+	}
+
+	// Add the last fragment if there's text left over.
 	if (index < text.length) {
 		fragments.push({ type: "text", text: text.substring(index) });
 	}
+
+	const hasBadges = res.tags.badges && res.tags.badges.length > 0;
 
 	return {
 		author: {
@@ -61,11 +85,12 @@ export function parseIrcChatMessage(res: Message<TwitchIrcTags>): ChatMessage {
 			login: res.prefix?.user ?? "",
 			name: res.tags["display-name"],
 			color: getNameColor(res.tags.color ?? ""),
-			badges:
-				res.tags.badges
-					?.split(",")
-					?.map((id) => id.split("/"))
-					?.map((id) => ({ set: id[0], id: id[1] })) ?? [],
+			badges: hasBadges
+				? res.tags.badges
+						.split(",")
+						.map((id) => id.split("/"))
+						.map((id) => ({ set: id[0], id: id[1] }))
+				: [],
 		},
 		text,
 		fragments,
