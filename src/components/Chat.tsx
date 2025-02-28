@@ -2,16 +2,16 @@ import { Colors } from "@/lib/constants/Colors";
 import type { Channel } from "@/lib/twitch/channel";
 import type { ChatEvent } from "@/lib/twitch/event";
 import { eMsg } from "@/lib/util";
+import { SendHorizonalIcon } from "lucide-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-	KeyboardAvoidingView,
 	type StyleProp,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 	type ViewStyle,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { BadgeProvider, type Badges } from "./BadgeProvider";
 import { EventList } from "./event/EventList";
 
@@ -27,8 +27,10 @@ export const Chat = ({ style, channel }: Props) => {
 	const [events, setEvents] = useState([] as ChatEvent.Any[]);
 	const [channelBadges, setChannelBadges] = useState({} as Badges);
 
+	const canSend = typedMessage !== "";
+
 	const sendChatMessage = useCallback(() => {
-		if (channel && input.current) {
+		if (channel && input.current && canSend) {
 			channel
 				.sendMessage(typedMessage)
 				.catch((err) =>
@@ -37,9 +39,10 @@ export const Chat = ({ style, channel }: Props) => {
 					),
 				);
 
+			setTypedMessage("");
 			input.current.clear();
 		}
-	}, [channel, typedMessage]);
+	}, [channel, typedMessage, canSend]);
 
 	useEffect(() => {
 		setEvents([]);
@@ -97,15 +100,28 @@ export const Chat = ({ style, channel }: Props) => {
 		<BadgeProvider badges={channelBadges}>
 			<View style={[styles.root, style]}>
 				<EventList style={styles.events} events={events} />
-				<TextInput
-					ref={input}
-					style={styles.input}
-					placeholder={`Send message to ${channel.info.name}...`}
-					onChangeText={setTypedMessage}
-					onSubmitEditing={sendChatMessage}
-					submitBehavior="submit"
-					returnKeyType="send"
-				/>
+				<View style={styles.inputWrapper}>
+					<TextInput
+						ref={input}
+						style={styles.input}
+						placeholder={`Send message to ${channel.info.name}...`}
+						onChangeText={setTypedMessage}
+						onSubmitEditing={sendChatMessage}
+						submitBehavior="submit"
+						returnKeyType="send"
+						enablesReturnKeyAutomatically={true}
+					/>
+
+					<TouchableOpacity
+						style={styles.sendButton}
+						onPress={sendChatMessage}
+						disabled={!canSend}
+					>
+						<SendHorizonalIcon
+							color={canSend ? Colors.normalText : Colors.hiddenText}
+						/>
+					</TouchableOpacity>
+				</View>
 			</View>
 		</BadgeProvider>
 	);
@@ -121,12 +137,23 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 
+	inputWrapper: {
+		display: "flex",
+		flexDirection: "row",
+		alignItems: "center",
+		gap: 8,
+		margin: 8,
+	},
+
 	input: {
+		flexGrow: 1,
 		color: Colors.normalText,
 		backgroundColor: Colors.inputBackground,
 		borderRadius: 8,
-
 		padding: 8,
-		margin: 8,
+	},
+
+	sendButton: {
+		paddingHorizontal: 8,
 	},
 });
