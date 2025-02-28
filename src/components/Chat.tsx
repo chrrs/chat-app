@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
 	},
 
 	input: {
-		flexGrow: 1,
+		flex: 1,
 		color: Colors.normalText,
 		backgroundColor: Colors.inputBackground,
 		borderRadius: 8,
