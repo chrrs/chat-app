@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
 	},
 
 	badgeWrapper: {
-		width: 16 + 3,
+		width: 18 + 4,
 	},
 
 	badge: {
 		bottom: -3,
-		width: 16,
-		height: 16,
+		width: 18,
+		height: 18,
 	},
 
 	emoteWrapper: {

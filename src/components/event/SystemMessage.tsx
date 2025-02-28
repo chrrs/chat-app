@@ -15,6 +15,6 @@ const styles = StyleSheet.create({
 		color: Colors.mutedText,
 
 		paddingHorizontal: 12,
-		paddingVertical: 2,
+		paddingVertical: 3,
 	},
 });

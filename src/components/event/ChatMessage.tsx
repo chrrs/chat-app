@@ -17,6 +17,6 @@ export const ChatMessage = ({ event }: Props) => {
 const styles = StyleSheet.create({
 	root: {
 		paddingHorizontal: 12,
-		paddingVertical: 2,
+		paddingVertical: 3,
 	},
 });

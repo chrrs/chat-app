@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 8,
 		paddingVertical: 4,
 
-		marginVertical: 2,
+		marginVertical: 3,
 	},
 
 	title: {
