@@ -107,6 +107,7 @@ export class TwitchClient {
 				id: emote.id,
 				name: emote.code,
 				url: `https://cdn.betterttv.net/emote/${emote.id}/2x.webp`,
+				aspect: emote.width ? emote.width / emote.height : 1,
 			} satisfies EmoteInfo,
 		]);
 
@@ -126,6 +127,7 @@ export class TwitchClient {
 					id: String(emote.id),
 					name: emote.name,
 					url: emote.urls["2"],
+					aspect: emote.width ? emote.width / emote.height : 1,
 				} satisfies EmoteInfo,
 			]),
 		);

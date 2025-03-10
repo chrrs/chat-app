@@ -4,6 +4,7 @@ export type EmoteInfo = {
 	id: string;
 	name: string;
 	url: string;
+	aspect: number;
 };
 
 export type Emotes = Record<string, EmoteInfo>;

@@ -46,9 +46,9 @@ const Badge = ({ badge }: { badge: BadgeIdentifier }) => {
 
 const Emote = ({ emote }: { emote: Fragment.Emote }) => {
 	return (
-		<View style={styles.emoteWrapper}>
+		<View>
 			<Image
-				style={styles.emote}
+				style={[styles.emote, { width: 20 * emote.aspect }]}
 				cachePolicy="memory"
 				recyclingKey={emote.id}
 				source={emote.url}
@@ -112,13 +112,8 @@ const styles = StyleSheet.create({
 		height: 18,
 	},
 
-	emoteWrapper: {
-		width: 20,
-	},
-
 	emote: {
 		bottom: -3,
-		width: 20,
 		height: 20,
 	},
 

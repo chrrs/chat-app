@@ -68,6 +68,7 @@ export function parseIrcChatMessage(res: Message<TwitchIrcTags>): ChatMessage {
 			id: emote.id,
 			name: text.substring(emote.start, emote.end),
 			url: `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/light/2.0`,
+			aspect: 1,
 		});
 		index = emote.end;
 	}

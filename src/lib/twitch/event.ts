@@ -17,6 +17,7 @@ export namespace Fragment {
 		id: string;
 		name: string;
 		url: string;
+		aspect: number;
 	};
 
 	export type Mention = {
@@ -80,6 +81,7 @@ export namespace ChatEvent {
 // biome-ignore lint/suspicious/noExplicitAny: we don't have proper API types.
 export function parseHelixMessage(event: any): ChatMessage {
 	// FIXME: Sometimes messages end with '󠀀' (\uE0000). Seems to be an anti-spam thing.
+	console.log(event);
 
 	return {
 		author: {
@@ -101,6 +103,7 @@ export function parseHelixMessage(event: any): ChatMessage {
 						id: fragment.emote.id,
 						name: fragment.text,
 						url: `https://static-cdn.jtvnw.net/emoticons/v2/${fragment.emote.id}/default/light/2.0`,
+						aspect: 1,
 					} satisfies Fragment.Emote)
 				: fragment.type === "mention"
 					? ({
