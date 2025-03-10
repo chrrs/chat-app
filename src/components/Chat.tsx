@@ -14,6 +14,7 @@ import {
 	type ViewStyle,
 } from "react-native";
 import { BadgeProvider, type Badges } from "./BadgeProvider";
+import { ChatHeader } from "./ChatHeader";
 import { EmoteProvider } from "./emotes/EmoteProvider";
 import { EventList } from "./event/EventList";
 
@@ -122,6 +123,7 @@ export const Chat = ({ style, channel }: Props) => {
 		<BadgeProvider badges={channelBadges}>
 			<EmoteProvider emotes={{ ...bttvEmotes, ...ffzEmotes }}>
 				<View style={[styles.root, style]}>
+					<ChatHeader user={channel.info} />
 					<EventList style={styles.events} events={events} />
 					<View style={styles.inputWrapper}>
 						<TextInput
