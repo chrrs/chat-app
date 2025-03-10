@@ -1,5 +1,6 @@
 import { Colors } from "@/lib/constants/Colors";
 import type { Channel } from "@/lib/twitch/channel";
+import type { Emotes } from "@/lib/twitch/emote";
 import type { ChatEvent } from "@/lib/twitch/event";
 import { eMsg } from "@/lib/util";
 import { SendHorizonalIcon } from "lucide-react-native";
@@ -13,6 +14,7 @@ import {
 	type ViewStyle,
 } from "react-native";
 import { BadgeProvider, type Badges } from "./BadgeProvider";
+import { EmoteProvider } from "./emotes/EmoteProvider";
 import { EventList } from "./event/EventList";
 
 interface Props {
@@ -26,6 +28,9 @@ export const Chat = ({ style, channel }: Props) => {
 
 	const [events, setEvents] = useState([] as ChatEvent.Any[]);
 	const [channelBadges, setChannelBadges] = useState({} as Badges);
+
+	const [bttvEmotes, setBttvEmotes] = useState({} as Emotes);
+	const [ffzEmotes, setFfzEmotes] = useState({} as Emotes);
 
 	const canSend = typedMessage !== "";
 
@@ -46,6 +51,9 @@ export const Chat = ({ style, channel }: Props) => {
 
 	useEffect(() => {
 		setEvents([]);
+		setChannelBadges({});
+		setBttvEmotes({});
+
 		(async () => {
 			const addSystemMessage = (message: string) =>
 				channel.addSystemMessage(message);
@@ -62,6 +70,20 @@ export const Chat = ({ style, channel }: Props) => {
 			if (channel.connected) {
 				channel.addSystemMessage("Reusing existing connection to Twitch.");
 			}
+
+			// Fetch BTTV & FFZ emotes
+			channel
+				.fetchBttvEmotes()
+				.then(setBttvEmotes)
+				.catch((err) =>
+					addSystemMessage(`Could not fetch channel BTTV emotes: ${eMsg(err)}`),
+				);
+			channel
+				.fetchFfzEmotes()
+				.then(setFfzEmotes)
+				.catch((err) =>
+					addSystemMessage(`Could not fetch channel FFZ emotes: ${eMsg(err)}`),
+				);
 
 			// Fetch channel badges. We await here so the historic messages can
 			// use these badges after they're fetched.
@@ -98,31 +120,33 @@ export const Chat = ({ style, channel }: Props) => {
 
 	return (
 		<BadgeProvider badges={channelBadges}>
-			<View style={[styles.root, style]}>
-				<EventList style={styles.events} events={events} />
-				<View style={styles.inputWrapper}>
-					<TextInput
-						ref={input}
-						style={styles.input}
-						placeholder={`Send message to ${channel.info.name}...`}
-						onChangeText={setTypedMessage}
-						onSubmitEditing={sendChatMessage}
-						submitBehavior="submit"
-						returnKeyType="send"
-						enablesReturnKeyAutomatically={true}
-					/>
-
-					<TouchableOpacity
-						style={styles.sendButton}
-						onPress={sendChatMessage}
-						disabled={!canSend}
-					>
-						<SendHorizonalIcon
-							color={canSend ? Colors.normalText : Colors.hiddenText}
+			<EmoteProvider emotes={{ ...bttvEmotes, ...ffzEmotes }}>
+				<View style={[styles.root, style]}>
+					<EventList style={styles.events} events={events} />
+					<View style={styles.inputWrapper}>
+						<TextInput
+							ref={input}
+							style={styles.input}
+							placeholder={`Send message to ${channel.info.name}...`}
+							onChangeText={setTypedMessage}
+							onSubmitEditing={sendChatMessage}
+							submitBehavior="submit"
+							returnKeyType="send"
+							enablesReturnKeyAutomatically={true}
 						/>
-					</TouchableOpacity>
+
+						<TouchableOpacity
+							style={styles.sendButton}
+							onPress={sendChatMessage}
+							disabled={!canSend}
+						>
+							<SendHorizonalIcon
+								color={canSend ? Colors.normalText : Colors.hiddenText}
+							/>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
+			</EmoteProvider>
 		</BadgeProvider>
 	);
 };

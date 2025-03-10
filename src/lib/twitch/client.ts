@@ -1,5 +1,6 @@
 import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 import { Channel } from "./channel";
+import type { EmoteInfo, Emotes } from "./emote";
 import { EventSubClient } from "./eventSub";
 import { HelixClient } from "./helix";
 
@@ -93,6 +94,43 @@ export class TwitchClient {
 		);
 
 		return Object.fromEntries(badges);
+	}
+
+	async fetchGlobalBttvEmotes(): Promise<Emotes> {
+		const res = await fetch("https://api.betterttv.net/3/cached/emotes/global");
+		const data = await res.json();
+
+		// @ts-ignore: FIXME
+		const emotes = data.map((emote) => [
+			emote.code,
+			{
+				id: emote.id,
+				name: emote.code,
+				url: `https://cdn.betterttv.net/emote/${emote.id}/2x.webp`,
+			} satisfies EmoteInfo,
+		]);
+
+		return Object.fromEntries(emotes);
+	}
+
+	async fetchGlobalFfzEmotes(): Promise<Emotes> {
+		const res = await fetch("https://api.frankerfacez.com/v1/set/global");
+		const data = await res.json();
+
+		// @ts-ignore: FIXME
+		const emotes = Object.values(data.sets).flatMap((set) =>
+			// @ts-ignore: FIXME
+			set.emoticons.map((emote) => [
+				emote.name,
+				{
+					id: String(emote.id),
+					name: emote.name,
+					url: emote.urls["2"],
+				} satisfies EmoteInfo,
+			]),
+		);
+
+		return Object.fromEntries(emotes);
 	}
 
 	async fetchStreams(logins: string[]): Promise<Record<string, StreamInfo>> {

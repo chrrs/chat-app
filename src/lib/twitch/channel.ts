@@ -1,6 +1,7 @@
 import type { BadgeInfo, Badges } from "@/components/BadgeProvider";
 import Emittery from "emittery";
 import type { TwitchClient, UserInfo } from "./client";
+import type { EmoteInfo, Emotes } from "./emote";
 import { type ChatEvent, parseHelixMessage } from "./event";
 import type { NotificationPayload } from "./eventSub";
 import { parseIrcEvent } from "./irc";
@@ -176,6 +177,48 @@ export class Channel {
 		);
 
 		return Object.fromEntries(badges);
+	}
+
+	async fetchBttvEmotes(): Promise<Emotes> {
+		const res = await fetch(
+			`https://api.betterttv.net/3/cached/users/twitch/${this.info.id}`,
+		);
+		const data = await res.json();
+
+		const emotes = [...data.channelEmotes, ...data.sharedEmotes].map(
+			(emote) => [
+				emote.code,
+				{
+					id: emote.id,
+					name: emote.code,
+					url: `https://cdn.betterttv.net/emote/${emote.id}/2x.webp`,
+				} satisfies EmoteInfo,
+			],
+		);
+
+		return Object.fromEntries(emotes);
+	}
+
+	async fetchFfzEmotes(): Promise<Emotes> {
+		const res = await fetch(
+			`https://api.frankerfacez.com/v1/room/id/${this.info.id}`,
+		);
+		const data = await res.json();
+
+		// @ts-ignore: FIXME
+		const emotes = Object.values(data.sets).flatMap((set) =>
+			// @ts-ignore: FIXME
+			set.emoticons.map((emote) => [
+				emote.name,
+				{
+					id: String(emote.id),
+					name: emote.name,
+					url: emote.urls["2"],
+				} satisfies EmoteInfo,
+			]),
+		);
+
+		return Object.fromEntries(emotes);
 	}
 
 	async sendMessage(message: string): Promise<void> {

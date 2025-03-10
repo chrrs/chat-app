@@ -1,12 +1,15 @@
 import { Colors } from "@/lib/constants/Colors";
+import { insertEmotes } from "@/lib/twitch/emote";
 import type {
 	BadgeIdentifier,
 	ChatMessage,
 	Fragment,
 } from "@/lib/twitch/event";
 import { Image } from "expo-image";
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useBadges } from "../BadgeProvider";
+import { useEmotes } from "../emotes/EmoteProvider";
 
 interface Props {
 	message: ChatMessage;
@@ -56,18 +59,25 @@ const Emote = ({ emote }: { emote: Fragment.Emote }) => {
 };
 
 export const InlineMessage = ({ message }: Props) => {
+	const emotes = useEmotes();
+
+	const processedMessage = useMemo(
+		() => insertEmotes(message, emotes),
+		[message, emotes],
+	);
+
 	return (
 		<Text style={styles.message}>
-			{message.author.badges.map((badge, index) => (
+			{processedMessage.author.badges.map((badge, index) => (
 				<Badge key={index} badge={badge} />
 			))}
-			<Text style={[styles.name, { color: message.author.color }]}>
-				{message.author.name}:
+			<Text style={[styles.name, { color: processedMessage.author.color }]}>
+				{processedMessage.author.name}:
 			</Text>
 
 			<Text>
 				{" "}
-				{message.fragments.map((fragment, index) =>
+				{processedMessage.fragments.map((fragment, index) =>
 					fragment.type === "emote" ? (
 						<Emote key={index} emote={fragment} />
 					) : fragment.type === "mention" ? (
