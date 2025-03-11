@@ -2,7 +2,7 @@ import { Colors } from "@/lib/constants/Colors";
 import type { StreamInfo } from "@/lib/twitch/client";
 import { Link } from "expo-router";
 import { User } from "lucide-react-native";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
 	login: string;
@@ -12,7 +12,7 @@ interface Props {
 export const ChannelButton = ({ login, info }: Props) => {
 	return (
 		<Link key={login} href={`/chat/${login}`} asChild>
-			<Pressable style={styles.pressable}>
+			<TouchableOpacity style={styles.pressable} activeOpacity={0.5}>
 				<View style={styles.header}>
 					<Text style={styles.name}>{info.user ? info.user.name : login}</Text>
 
@@ -33,7 +33,7 @@ export const ChannelButton = ({ login, info }: Props) => {
 				) : (
 					<Text style={{ color: Colors.mutedText }}>offline</Text>
 				)}
-			</Pressable>
+			</TouchableOpacity>
 		</Link>
 	);
 };

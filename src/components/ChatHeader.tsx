@@ -13,11 +13,15 @@ export const ChatHeader = ({ user }: Props) => {
 
 	return (
 		<View style={styles.root}>
-			<TouchableOpacity style={styles.button} onPress={() => router.dismiss()}>
+			<TouchableOpacity
+				style={styles.button}
+				onPress={() => router.dismiss()}
+				activeOpacity={0.5}
+			>
 				<ChevronLeftIcon color={Colors.normalText} />
 			</TouchableOpacity>
 			<Text style={styles.title}>{user.name}</Text>
-			<TouchableOpacity style={styles.button}>
+			<TouchableOpacity style={styles.button} activeOpacity={0.5}>
 				<SettingsIcon color={Colors.normalText} />
 			</TouchableOpacity>
 		</View>
