@@ -35,6 +35,7 @@ export const AuthScreen = ({ onToken }: Props) => {
 			scopes: [
 				"user:read:chat",
 				"user:write:chat",
+				"user:read:emotes",
 				"channel:read:redemptions",
 				"channel:read:hype_train",
 				"channel:read:polls",

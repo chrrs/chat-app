@@ -172,4 +172,36 @@ export class TwitchClient {
 
 		return out;
 	}
+
+	async getUsableEmotes(): Promise<Emotes> {
+		let after: string | undefined;
+		let emotes: Emotes = {};
+
+		do {
+			const query = after === undefined ? "" : `&after=${after}`;
+			const res = await this.helix
+				.get(`chat/emotes/user?user_id=${this.self.id}${query}`)
+				.then((res) => res.json());
+
+			after = res.pagination?.cursor;
+
+			emotes = {
+				...emotes,
+				...Object.fromEntries(
+					// @ts-expect-error: FIXME
+					res.data.map((emote) => [
+						emote.name,
+						{
+							id: emote.id,
+							name: emote.name,
+							url: `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/light/2.0`,
+							aspect: 1,
+						} satisfies EmoteInfo,
+					]),
+				),
+			};
+		} while (after !== undefined);
+
+		return emotes;
+	}
 }
