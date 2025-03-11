@@ -78,28 +78,24 @@ export default function () {
 			<EmoteProvider emotes={{ ...bttvEmotes, ...ffzEmotes }}>
 				<SafeAreaView>
 					<KeyboardAvoidingView behavior="padding">
-						<View>
-							{isFetching ? (
-								<CenteredSpinner text="Joining..." />
-							) : error || !channel ? (
-								<View style={styles.error}>
-									<View style={styles.title}>
-										<CircleAlertIcon size={20} color={Colors.errorText} />
-										<Text
-											style={{ color: Colors.errorText, fontWeight: "bold" }}
-										>
-											Could not join channel.
-										</Text>
-									</View>
-
-									{error.length > 0 && (
-										<Text style={styles.subtitle}>{error}</Text>
-									)}
+						{isFetching ? (
+							<CenteredSpinner text="Joining..." />
+						) : error || !channel ? (
+							<View style={styles.error}>
+								<View style={styles.title}>
+									<CircleAlertIcon size={20} color={Colors.errorText} />
+									<Text style={{ color: Colors.errorText, fontWeight: "bold" }}>
+										Could not join channel.
+									</Text>
 								</View>
-							) : (
-								<Chat key={String(login)} channel={channel} />
-							)}
-						</View>
+
+								{error.length > 0 && (
+									<Text style={styles.subtitle}>{error}</Text>
+								)}
+							</View>
+						) : (
+							<Chat key={String(login)} channel={channel} />
+						)}
 					</KeyboardAvoidingView>
 				</SafeAreaView>
 			</EmoteProvider>

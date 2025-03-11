@@ -46,8 +46,6 @@ export const ChatInput = ({ placeholder, onSend }: Props) => {
 		client?.getUsableEmotes().then(setTwitchEmotes);
 	}, [client]);
 
-	useEffect(() => console.log(twitchEmotes), [twitchEmotes]);
-
 	const send = useCallback(() => {
 		if (input.current && canSend) {
 			onSend(typedMessage);
