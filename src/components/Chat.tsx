@@ -3,18 +3,11 @@ import type { Channel } from "@/lib/twitch/channel";
 import type { Emotes } from "@/lib/twitch/emote";
 import type { ChatEvent } from "@/lib/twitch/event";
 import { eMsg } from "@/lib/util";
-import { SendHorizonalIcon } from "lucide-react-native";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-	type StyleProp,
-	StyleSheet,
-	TextInput,
-	TouchableOpacity,
-	View,
-	type ViewStyle,
-} from "react-native";
+import { useEffect, useState } from "react";
+import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { BadgeProvider, type Badges } from "./BadgeProvider";
 import { ChatHeader } from "./ChatHeader";
+import { ChatInput } from "./ChatInput";
 import { EmoteProvider } from "./emotes/EmoteProvider";
 import { EventList } from "./event/EventList";
 
@@ -24,31 +17,18 @@ interface Props {
 }
 
 export const Chat = ({ style, channel }: Props) => {
-	const input = useRef<TextInput>(null);
-	const [typedMessage, setTypedMessage] = useState("");
-
 	const [events, setEvents] = useState([] as ChatEvent.Any[]);
 	const [channelBadges, setChannelBadges] = useState({} as Badges);
 
 	const [bttvEmotes, setBttvEmotes] = useState({} as Emotes);
 	const [ffzEmotes, setFfzEmotes] = useState({} as Emotes);
 
-	const canSend = typedMessage !== "";
-
-	const sendChatMessage = useCallback(() => {
-		if (channel && input.current && canSend) {
-			channel
-				.sendMessage(typedMessage)
-				.catch((err) =>
-					channel?.addSystemMessage(
-						`Could not fetch channel badges: ${eMsg(err)}`,
-					),
-				);
-
-			setTypedMessage("");
-			input.current.clear();
-		}
-	}, [channel, typedMessage, canSend]);
+	const sendChatMessage = (message: string) =>
+		channel
+			.sendMessage(message)
+			.catch((err) =>
+				channel?.addSystemMessage(`Could not send message: ${eMsg(err)}`),
+			);
 
 	useEffect(() => {
 		setEvents([]);
@@ -125,28 +105,10 @@ export const Chat = ({ style, channel }: Props) => {
 				<View style={[styles.root, style]}>
 					<ChatHeader user={channel.info} />
 					<EventList style={styles.events} events={events} />
-					<View style={styles.inputWrapper}>
-						<TextInput
-							ref={input}
-							style={styles.input}
-							placeholder={`Send message to ${channel.info.name}...`}
-							onChangeText={setTypedMessage}
-							onSubmitEditing={sendChatMessage}
-							submitBehavior="submit"
-							returnKeyType="send"
-							enablesReturnKeyAutomatically={true}
-						/>
-
-						<TouchableOpacity
-							style={styles.sendButton}
-							onPress={sendChatMessage}
-							disabled={!canSend}
-						>
-							<SendHorizonalIcon
-								color={canSend ? Colors.normalText : Colors.hiddenText}
-							/>
-						</TouchableOpacity>
-					</View>
+					<ChatInput
+						placeholder={`Send message to ${channel.info.name}...`}
+						onSend={sendChatMessage}
+					/>
 				</View>
 			</EmoteProvider>
 		</BadgeProvider>
@@ -161,25 +123,5 @@ const styles = StyleSheet.create({
 
 	events: {
 		flex: 1,
-	},
-
-	inputWrapper: {
-		display: "flex",
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 8,
-		margin: 8,
-	},
-
-	input: {
-		flex: 1,
-		color: Colors.normalText,
-		backgroundColor: Colors.inputBackground,
-		borderRadius: 8,
-		padding: 8,
-	},
-
-	sendButton: {
-		paddingHorizontal: 8,
 	},
 });
