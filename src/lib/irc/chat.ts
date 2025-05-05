@@ -20,7 +20,7 @@ export interface ChatMessage {
 }
 
 export interface Badge {
-	id: string;
+	set: string;
 	version: string;
 }
 
@@ -69,8 +69,8 @@ function parseBadges(badgesStr?: string): Badge[] {
 	if (!badgesStr) return [];
 
 	return badgesStr.split(",").map((badge: string) => {
-		const [id, version] = badge.split("/");
-		return { id, version };
+		const [set, version] = badge.split("/");
+		return { set, version };
 	});
 }
 

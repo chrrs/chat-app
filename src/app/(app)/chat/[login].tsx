@@ -1,9 +1,8 @@
 import { CenteredError } from "@/components/CenteredError";
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { Header } from "@/components/Header";
-import { EventList } from "@/components/chat/EventList";
+import { Chat } from "@/components/chat/Chat";
 import { IconButton } from "@/components/ui/IconButton";
-import { useChat } from "@/lib/irc/chat";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -20,8 +19,6 @@ export default function () {
 		queryKey: ["user", login],
 		queryFn: () => session!.apiClient.users.getUserByName(login),
 	});
-
-	const { events } = useChat(login);
 
 	return (
 		<SafeAreaView>
@@ -40,7 +37,7 @@ export default function () {
 						<CenteredError text="Couldn't join channel." />
 					</View>
 				) : (
-					<EventList style={styles.state} events={events} />
+					<Chat style={styles.state} user={user.data} />
 				)}
 			</View>
 		</SafeAreaView>
