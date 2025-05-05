@@ -7,6 +7,9 @@ export const Colors = {
 	mutedText: PlatformColor("secondaryLabel"),
 	accentColor: PlatformColor("systemPurple"),
 
+	primaryBackground: PlatformColor("systemPurple"),
+	secondaryBackground: PlatformColor("systemGray6"),
+
 	errorText: PlatformColor("systemRed"),
 
 	viewersText: PlatformColor("systemRed"),

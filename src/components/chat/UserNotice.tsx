@@ -1,18 +1,16 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { ChatEvent } from "@/lib/twitch/event";
+import type { Event } from "@/lib/irc/chat";
 import { StyleSheet, Text, View } from "react-native";
 import { InlineMessage } from "./InlineMessage";
 
 interface Props {
-	event: ChatEvent.Notice;
+	event: Event.UserNotice;
 }
 
-export const Notice = ({ event }: Props) => {
+export const UserNotice = ({ event }: Props) => {
 	return (
 		<View style={styles.root}>
-			<Text style={[styles.title, { marginBottom: event.message ? 2 : 0 }]}>
-				{event.text}
-			</Text>
+			<Text style={[styles.title, { marginBottom: event.message ? 2 : 0 }]}>{event.text}</Text>
 
 			{event.message && <InlineMessage message={event.message} />}
 		</View>

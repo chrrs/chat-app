@@ -1,35 +1,34 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { ChatEvent } from "@/lib/twitch/event";
+import type { Event } from "@/lib/irc/chat";
 import { FlashList } from "@shopify/flash-list";
 import { useEffect, useRef, useState } from "react";
 import {
 	type NativeScrollEvent,
 	type NativeSyntheticEvent,
-	Pressable,
 	type StyleProp,
 	StyleSheet,
 	Text,
+	TouchableOpacity,
 	View,
 	type ViewStyle,
 } from "react-native";
 import { ChatMessage } from "./ChatMessage";
-import { Notice } from "./Notice";
-import { Redemption } from "./Redemption";
 import { SystemMessage } from "./SystemMessage";
+import { UserNotice } from "./UserNotice";
 
 interface Props {
 	style?: StyleProp<ViewStyle>;
-	events: ChatEvent.Any[];
+	events: Event.All[];
 }
 
 export const EventList = ({ style, events }: Props) => {
-	const list = useRef<FlashList<ChatEvent.Any>>(null);
-	const [shownEvents, setShownEvents] = useState(events);
+	const list = useRef<FlashList<Event.All>>(null);
+	const [shownEvents, setShownEvents] = useState(events.toReversed());
 	const [atBottom, setAtBottom] = useState(true);
 
 	useEffect(() => {
 		if (atBottom) {
-			setShownEvents(events);
+			setShownEvents(events.toReversed());
 		}
 	}, [events, atBottom]);
 
@@ -53,13 +52,11 @@ export const EventList = ({ style, events }: Props) => {
 				keyExtractor={(item) => item.id}
 				getItemType={(item) => item.type}
 				renderItem={({ item }) => (
-					<View style={{ opacity: item.historical ? 0.6 : undefined }}>
+					<View style={{ opacity: (item.historical ? 0.6 : 1.0) * (item.deleted ? 0.3 : 1.0) }}>
 						{item.type === "message" ? (
 							<ChatMessage event={item} />
-						) : item.type === "notice" ? (
-							<Notice event={item} />
-						) : item.type === "redemption" ? (
-							<Redemption event={item} />
+						) : item.type === "usernotice" ? (
+							<UserNotice event={item} />
 						) : (
 							<SystemMessage event={item} />
 						)}
@@ -68,9 +65,9 @@ export const EventList = ({ style, events }: Props) => {
 			/>
 
 			{!atBottom && (
-				<Pressable style={styles.bottomButton} onPress={scrollToBottom}>
+				<TouchableOpacity style={styles.bottomButton} onPress={scrollToBottom} activeOpacity={0.5}>
 					<Text style={styles.bottomText}>More messages below...</Text>
-				</Pressable>
+				</TouchableOpacity>
 			)}
 		</View>
 	);

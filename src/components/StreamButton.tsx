@@ -1,38 +1,39 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { StreamInfo } from "@/lib/twitch/client";
+import type { HelixStream } from "@twurple/api";
 import { Link } from "expo-router";
 import { User } from "lucide-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
-	login: string;
-	info: StreamInfo;
+	stream: HelixStream;
 }
 
-export const ChannelButton = ({ login, info }: Props) => {
+export const StreamButton = ({ stream }: Props) => {
 	return (
-		<Link key={login} href={`/chat/${login}`} asChild>
+		<Link
+			href={{
+				pathname: "/chat/[login]",
+				params: { login: stream.userName, displayName: stream.userDisplayName },
+			}}
+			asChild
+		>
 			<TouchableOpacity style={styles.pressable} activeOpacity={0.5}>
 				<View style={styles.header}>
-					<Text style={styles.name}>{info.user ? info.user.name : login}</Text>
+					<Text style={styles.name}>{stream.userDisplayName}</Text>
 
-					{info.stream && (
-						<View style={styles.viewersWrapper}>
-							<Text style={{ color: Colors.viewersText }}>
-								{info.stream.viewers.toLocaleString("en-US")}
-							</Text>
-							<User size={16} color={Colors.viewersText} />
-						</View>
-					)}
+					<View style={styles.viewersWrapper}>
+						<Text style={{ color: Colors.viewersText }}>
+							{stream.viewers.toLocaleString("en-US")}
+						</Text>
+						<User size={16} color={Colors.viewersText} />
+					</View>
 				</View>
 
-				{info.stream ? (
-					<Text numberOfLines={2} style={styles.title}>
-						{info.stream.title}
-					</Text>
-				) : (
-					<Text style={{ color: Colors.mutedText }}>offline</Text>
-				)}
+				<Text numberOfLines={2} style={styles.title}>
+					{stream.title}
+				</Text>
+
+				<Text style={styles.game}>{stream.gameName}</Text>
 			</TouchableOpacity>
 		</Link>
 	);
@@ -67,5 +68,12 @@ const styles = StyleSheet.create({
 
 	title: {
 		color: Colors.normalText,
+		marginBottom: 4,
+	},
+
+	game: {
+		color: Colors.mutedText,
+		fontWeight: "bold",
+		fontSize: 12,
 	},
 });

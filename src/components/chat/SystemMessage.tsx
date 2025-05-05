@@ -1,9 +1,9 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { ChatEvent } from "@/lib/twitch/event";
+import type { Event } from "@/lib/irc/chat";
 import { StyleSheet, Text } from "react-native";
 
 interface Props {
-	event: ChatEvent.System;
+	event: Event.SystemMessage;
 }
 
 export const SystemMessage = ({ event }: Props) => {

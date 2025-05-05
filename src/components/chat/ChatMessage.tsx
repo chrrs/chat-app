@@ -1,9 +1,9 @@
-import type { ChatEvent } from "@/lib/twitch/event";
+import type { Event } from "@/lib/irc/chat";
 import { StyleSheet, View } from "react-native";
 import { InlineMessage } from "./InlineMessage";
 
 interface Props {
-	event: ChatEvent.Message;
+	event: Event.Message;
 }
 
 export const ChatMessage = ({ event }: Props) => {

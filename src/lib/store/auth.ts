@@ -1,18 +1,45 @@
+import { ApiClient } from "@twurple/api";
+import { type AuthProvider, StaticAuthProvider, type TokenInfo, getTokenInfo } from "@twurple/auth";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { TwitchClient } from "../twitch/client";
+import { TwitchIrcClient } from "../irc/client";
 import { SecureStorage } from "./secureStorage";
 
 type Status = "hydrating" | "authenticating" | "ready";
 
+interface Session {
+	userId: string;
+	login: string | null;
+
+	authProvider: AuthProvider;
+	apiClient: ApiClient;
+	ircClient: TwitchIrcClient;
+}
+
 interface TwitchAuthStore {
 	setToken: (token: string | null) => void;
 	revalidate: () => Promise<void>;
-	logout: () => void;
+	signOut: () => void;
 
 	status: Status;
 	token: string | null;
-	client: TwitchClient | null;
+	session: Session | null;
+}
+
+function createSession(token: string, info: TokenInfo): Session {
+	const clientId = process.env.EXPO_PUBLIC_TWITCH_CLIENT_ID;
+	const authProvider = new StaticAuthProvider(clientId, token);
+	const apiClient = new ApiClient({ authProvider });
+	const ircClient = new TwitchIrcClient(authProvider);
+
+	return {
+		userId: info.userId ?? "unknown",
+		login: info.userName,
+
+		authProvider,
+		apiClient,
+		ircClient,
+	};
 }
 
 export const useTwitchAuth = create<TwitchAuthStore>()(
@@ -25,26 +52,31 @@ export const useTwitchAuth = create<TwitchAuthStore>()(
 
 			revalidate: async () => {
 				const token = get().token;
-				if (token !== null) {
-					set({ status: "authenticating" });
-					await TwitchClient.authenticate(token)
-						.then((client) => {
-							if (client === null) set({ token: null });
-							else set({ client });
-						})
-						.then(() => set({ status: "ready" }));
-				} else {
-					set({ status: "ready" });
+				if (token === null) {
+					console.warn("no token, skipping revalidation");
+					set({ status: "ready", session: null });
+					return;
 				}
+
+				set({ status: "authenticating" });
+
+				getTokenInfo(token)
+					.then((info) => {
+						set({ status: "ready", session: createSession(token, info) });
+					})
+					.catch((error) => {
+						console.warn("failed to validate token:", error);
+						set({ status: "ready", session: null });
+					});
 			},
 
-			logout: () => {
-				set({ token: null, client: null });
+			signOut: () => {
+				set({ token: null, session: null });
 			},
 
 			status: "hydrating",
 			token: null,
-			client: null,
+			session: null,
 		}),
 		{
 			name: "twitch_auth",

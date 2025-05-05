@@ -1,40 +1,39 @@
-import { CenteredSpinner } from "@/components/CenteredSpinner";
-import { AuthScreen } from "@/components/auth/AuthScreen";
-import { Colors } from "@/lib/constants/Colors";
-import { useTwitchAuth } from "@/lib/store/auth";
-import { Stack } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import {
+	QueryClient,
+	QueryClientProvider,
+	focusManager,
+	onlineManager,
+} from "@tanstack/react-query";
+import * as Network from "expo-network";
+import { Slot } from "expo-router";
+import { useEffect } from "react";
+import { AppState, type AppStateStatus, Platform } from "react-native";
 
-export default function () {
-	const { status, token, setToken } = useTwitchAuth();
+const queryClient = new QueryClient();
 
-	if (status !== "ready") {
-		return <CenteredSpinner text="Authenticating..." />;
+onlineManager.setEventListener((setOnline) => {
+	const eventSubscription = Network.addNetworkStateListener((state) => {
+		setOnline(!!state.isConnected);
+	});
+
+	return eventSubscription.remove;
+});
+
+function onAppStateChange(status: AppStateStatus) {
+	if (Platform.OS !== "web") {
+		focusManager.setFocused(status === "active");
 	}
-
-	if (token === null) {
-		return <AuthScreen onToken={setToken} />;
-	}
-
-	return (
-		<View style={styles.container}>
-			<Stack
-				screenOptions={{
-					headerShown: false,
-					contentStyle: { backgroundColor: Colors.background },
-				}}
-			>
-				<Stack.Screen name="index" />
-				<Stack.Screen name="chat/[login]" />
-			</Stack>
-		</View>
-	);
 }
 
-const styles = StyleSheet.create({
-	container: {
-		backgroundColor: Colors.background,
-		width: "100%",
-		height: "100%",
-	},
-});
+export default function () {
+	useEffect(() => {
+		const subscription = AppState.addEventListener("change", onAppStateChange);
+		return () => subscription.remove();
+	}, []);
+
+	return (
+		<QueryClientProvider client={queryClient}>
+			<Slot />
+		</QueryClientProvider>
+	);
+}
