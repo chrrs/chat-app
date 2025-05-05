@@ -25,7 +25,7 @@ export interface PrivmsgTags extends BaseTags {
 	/** Client-generated nonce for message deduplication */
 	"client-nonce"?: string;
 	/** The color of the user's name in the chat room. Hexadecimal RGB color code in the form #RRGGBB */
-	color?: string;
+	color: string;
 	/** The user's display name, may contain uppercase letters and special characters */
 	"display-name": string;
 	/**
@@ -100,7 +100,7 @@ export interface UsernoticeTags extends BaseTags {
 	/** Comma-separated list of chat badges in the form <badge>/<version> */
 	badges?: string;
 	/** The color of the user's name in the chat room */
-	color?: string;
+	color: string;
 	/** The user's display name */
 	"display-name": string;
 	/** A slash-delimited list of emotes and their positions in the message */
@@ -236,7 +236,7 @@ export interface UserstateTags extends BaseTags {
 	/** Comma-separated list of chat badges in the form <badge>/<version> */
 	badges: string;
 	/** The color of the user's name in the chat room */
-	color?: string;
+	color: string;
 	/** The user's display name */
 	"display-name": string;
 	/** A comma-delimited list of IDs that identify the emote sets the user has access to */

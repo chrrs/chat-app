@@ -8,7 +8,7 @@ export interface User {
 	login: string;
 	name: string;
 
-	color?: string;
+	color: string;
 	badges: Badge[];
 }
 
@@ -61,6 +61,8 @@ export namespace Event {
 
 	export type All = Message | UserNotice | SystemMessage;
 }
+
+const DEFAULT_COLOR = "#bbb";
 
 /**
  * Parse badges from a badges string into an array of Badge objects
@@ -136,7 +138,7 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 				id: tags["user-id"],
 				login: msg.prefix?.user ?? "",
 				name: tags["display-name"],
-				color: tags.color,
+				color: tags.color !== "" ? tags.color : DEFAULT_COLOR,
 				badges: parseBadges(tags.badges),
 			};
 
@@ -154,12 +156,15 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 			// Handle reply-to if present
 			let replyTo: ChatMessage | undefined;
 			if (tags["reply-parent-msg-id"]) {
+				const parent = tags["reply-parent-display-name"] ?? tags["reply-parent-user-login"] ?? "";
+
 				replyTo = {
 					id: tags["reply-parent-msg-id"],
 					author: {
 						id: tags["reply-parent-user-id"] ?? "",
 						login: tags["reply-parent-user-login"] ?? "",
-						name: tags["reply-parent-display-name"] ?? tags["reply-parent-user-login"] ?? "",
+						name: parent,
+						color: DEFAULT_COLOR,
 						badges: [], // We don't have badge info for the parent message
 					},
 					emotes: [], // We don't have emote info for the parent message
@@ -190,7 +195,8 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 					id: tags["user-id"],
 					login: tags.login,
 					name: tags["display-name"],
-					color: tags.color,
+					// Use provided color or generate a default one
+					color: tags.color !== "" ? tags.color : DEFAULT_COLOR,
 					badges: parseBadges(tags.badges),
 				};
 
