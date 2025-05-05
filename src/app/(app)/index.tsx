@@ -1,6 +1,6 @@
 import { Header } from "@/components/Header";
-import { IconButton } from "@/components/IconButton";
 import { StreamButton } from "@/components/StreamButton";
+import { IconButton } from "@/components/ui/IconButton";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import { DoorOpenIcon } from "lucide-react-native";

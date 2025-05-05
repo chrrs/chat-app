@@ -1,8 +1,8 @@
 import { CenteredError } from "@/components/CenteredError";
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { Header } from "@/components/Header";
-import { IconButton } from "@/components/IconButton";
 import { EventList } from "@/components/chat/EventList";
+import { IconButton } from "@/components/ui/IconButton";
 import { useChat } from "@/lib/irc/chat";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";

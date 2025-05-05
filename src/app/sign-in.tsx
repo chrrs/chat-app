@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 import { Colors } from "@/lib/constants/Colors";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQueryClient } from "@tanstack/react-query";
