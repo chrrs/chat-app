@@ -281,6 +281,14 @@ export function useChat(login: string) {
 
 	const session = useTwitchAuth((state) => state.session);
 
+	// Send a message to the chat.
+	const sendMessage = useCallback(
+		(message: string) => {
+			session?.ircClient?.say(login, message);
+		},
+		[login, session],
+	);
+
 	// Push new events to the list, limiting the size to 1000.
 	const pushEvents = useCallback((events: Event.All[], sort = false) => {
 		setEvents((prev) => {
@@ -428,5 +436,5 @@ export function useChat(login: string) {
 		};
 	}, [session, login, fetchOldMessages, handleIrcMessage, pushSystemMessage]);
 
-	return { events, pushSystemMessage };
+	return { events, pushSystemMessage, sendMessage };
 }

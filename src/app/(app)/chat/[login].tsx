@@ -1,13 +1,14 @@
 import { CenteredError } from "@/components/CenteredError";
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { Header } from "@/components/Header";
+import { KeyboardAvoidingSafeView } from "@/components/KeyboardAvoidingSafeView";
 import { Chat } from "@/components/chat/Chat";
 import { IconButton } from "@/components/ui/IconButton";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeftIcon } from "lucide-react-native";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function () {
 	const router = useRouter();
@@ -21,7 +22,7 @@ export default function () {
 	});
 
 	return (
-		<SafeAreaView>
+		<KeyboardAvoidingSafeView>
 			<View style={styles.root}>
 				<Header
 					left={<IconButton icon={ChevronLeftIcon} onPress={router.back} />}
@@ -40,7 +41,7 @@ export default function () {
 					<Chat style={styles.state} user={user.data} />
 				)}
 			</View>
-		</SafeAreaView>
+		</KeyboardAvoidingSafeView>
 	);
 }
 
