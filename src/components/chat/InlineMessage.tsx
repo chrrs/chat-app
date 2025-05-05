@@ -1,7 +1,11 @@
 import { Colors } from "@/lib/constants/Colors";
 import type { Badge, ChatMessage } from "@/lib/irc/chat";
+import type { Segment } from "@/lib/irc/segmenter";
+import { segmentMessage } from "@/lib/irc/segmenter";
 import { Image } from "expo-image";
-import { StyleSheet, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { useMemo } from "react";
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useBadges } from "../context/BadgeProvider";
 
 const BadgeImage = ({ badge }: { badge: Badge }) => {
@@ -16,11 +20,33 @@ const BadgeImage = ({ badge }: { badge: Badge }) => {
 					style={styles.badge}
 					cachePolicy="memory"
 					recyclingKey={key}
-					source={helixBadge.getImageUrl(1)}
+					source={helixBadge.getImageUrl(2)}
 					alt={helixBadge.title}
 				/>
 			)}
 		</View>
+	);
+};
+
+const Emote = ({ emote }: { emote: Segment.Emote }) => {
+	return (
+		<View>
+			<Image
+				style={[styles.emote, { width: 20 * emote.aspectRatio }]}
+				cachePolicy="memory"
+				recyclingKey={emote.id}
+				source={emote.imageUrl}
+				alt={emote.name}
+			/>
+		</View>
+	);
+};
+
+const Hyperlink = ({ url }: { url: string }) => {
+	return (
+		<Link style={styles.url} href={url}>
+			{url}
+		</Link>
 	);
 };
 
@@ -29,15 +55,24 @@ interface Props {
 }
 
 export const InlineMessage = ({ message }: Props) => {
+	const segments = useMemo(() => segmentMessage(message), [message]);
+
 	return (
 		<Text style={styles.message}>
 			{message.author.badges.map((badge) => (
 				<BadgeImage key={badge.set} badge={badge} />
 			))}
-
 			<Text style={[styles.name, { color: message.author.color }]}>{message.author.name}:</Text>
-
-			<Text>{` ${message.text}`}</Text>
+			{/* Space between name and message */}{" "}
+			{segments.map((segment, index) =>
+				segment.type === "emote" ? (
+					<Emote key={index} emote={segment} />
+				) : segment.type === "url" ? (
+					<Hyperlink key={index} url={segment.url} />
+				) : (
+					<Text key={index}>{segment.content}</Text>
+				),
+			)}
 		</Text>
 	);
 };
@@ -68,5 +103,10 @@ const styles = StyleSheet.create({
 
 	mention: {
 		fontWeight: "bold",
+	},
+
+	url: {
+		color: Colors.hyperlink,
+		textDecorationLine: "underline",
 	},
 });

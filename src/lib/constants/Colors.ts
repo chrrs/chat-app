@@ -11,6 +11,7 @@ export const Colors = {
 	secondaryBackground: PlatformColor("systemGray6"),
 
 	errorText: PlatformColor("systemRed"),
+	hyperlink: PlatformColor("systemBlue"),
 
 	viewersText: PlatformColor("systemRed"),
 
