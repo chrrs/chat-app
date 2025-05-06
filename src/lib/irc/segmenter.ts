@@ -31,23 +31,34 @@ const URL_REGEX = /https?:\/\/[^\s]+|www\.[^\s]+/g;
  * @param message The chat message object containing text and emotes
  * @returns An array of message segments in the correct order
  */
-export function segmentMessage(message: ChatMessage): Segment.All[] {
+export function segmentMessage(message: ChatMessage, removeFirstMention: boolean): Segment.All[] {
 	const { text, emotes } = message;
 
 	// If there are no emotes or URLs, just return the whole text as one segment
-	if (emotes.length === 0 && !URL_REGEX.test(text)) {
+	if (!removeFirstMention && emotes.length === 0 && !URL_REGEX.test(text)) {
 		return [{ type: "text", content: text }];
 	}
 
 	// Create an array of markers indicating where segments start and end
 	type Marker = {
 		position: number;
-		type: "emote" | "url" | "text";
+		type: "emote" | "url" | "text" | "mention";
 		emoteId?: string;
 		isEnd?: boolean;
 	};
 
 	const markers: Marker[] = [];
+
+	// Remove the first mention if specified.
+	if (removeFirstMention) {
+		if (text.startsWith("@")) {
+			let endOfMention = text.indexOf(" ");
+			endOfMention = endOfMention === -1 ? text.length : endOfMention + 1;
+
+			markers.push({ position: 0, type: "mention" });
+			markers.push({ position: endOfMention, type: "text", isEnd: true });
+		}
+	}
 
 	// Add markers for emotes
 	for (const emote of emotes) {
@@ -81,7 +92,7 @@ export function segmentMessage(message: ChatMessage): Segment.All[] {
 
 	// Process the markers to create segments
 	const segments: Segment.All[] = [];
-	let currentType: "text" | "emote" | "url" = "text";
+	let currentType: Marker["type"] = "text";
 	let currentEmoteId: string | undefined = undefined;
 	let lastPosition = 0;
 

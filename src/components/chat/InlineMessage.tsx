@@ -52,10 +52,11 @@ const Hyperlink = ({ url }: { url: string }) => {
 
 interface Props {
 	message: ChatMessage;
+	isReply?: boolean;
 }
 
-export const InlineMessage = ({ message }: Props) => {
-	const segments = useMemo(() => segmentMessage(message), [message]);
+export const InlineMessage = ({ message, isReply }: Props) => {
+	const segments = useMemo(() => segmentMessage(message, isReply ?? false), [message, isReply]);
 
 	return (
 		<Text style={styles.message}>

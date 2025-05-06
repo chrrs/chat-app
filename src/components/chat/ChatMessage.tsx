@@ -16,7 +16,8 @@ export const ChatMessage = ({ event }: Props) => {
 					{event.replyTo.text}
 				</Text>
 			)}
-			<InlineMessage message={event.message} />
+
+			<InlineMessage message={event.message} isReply={event.replyTo !== undefined} />
 		</View>
 	);
 };
