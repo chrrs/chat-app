@@ -404,7 +404,7 @@ export function useChat(channel: HelixUser) {
 				pushEvents(events, true);
 			}
 		},
-		[channel, pushEvents],
+		[channel.name, pushEvents],
 	);
 
 	useEffect(() => {
@@ -439,7 +439,7 @@ export function useChat(channel: HelixUser) {
 			session!.ircClient.off("message", handleMessage);
 			session!.ircClient.off("ready", handleReady);
 		};
-	}, [session, channel, fetchOldMessages, handleIrcMessage, pushSystemMessage]);
+	}, [session, channel.name, fetchOldMessages, handleIrcMessage, pushSystemMessage]);
 
 	return { events, pushSystemMessage, sendMessage };
 }
