@@ -1,10 +1,12 @@
 import { useChat } from "@/lib/irc/chat";
+import { fetchChannelEmotes } from "@/lib/message/emotes";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import type { HelixUser } from "@twurple/api";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
 import { ChatInput } from "../ChatInput";
 import { BadgeProvider } from "../context/BadgeProvider";
+import { ThirdPartyEmoteProvider } from "../context/ThirdPartyEmoteProvider";
 import { EventList } from "./EventList";
 
 interface Props {
@@ -21,12 +23,20 @@ export const Chat = ({ user, style }: Props) => {
 		queryFn: async () => await session!.apiClient.chat.getChannelBadges(user),
 	});
 
+	const channelEmotes = useQuery({
+		queryKey: ["emotes", "channel", user.id],
+		queryFn: async () => await fetchChannelEmotes(user),
+		gcTime: 0,
+	});
+
 	return (
 		<BadgeProvider badges={channelBadges.data ?? []}>
-			<View style={style}>
-				<EventList style={styles.events} events={events} />
-				<ChatInput onSend={sendMessage} />
-			</View>
+			<ThirdPartyEmoteProvider emotes={channelEmotes.data ?? {}}>
+				<View style={style}>
+					<EventList style={styles.events} events={events} />
+					<ChatInput onSend={sendMessage} />
+				</View>
+			</ThirdPartyEmoteProvider>
 		</BadgeProvider>
 	);
 };

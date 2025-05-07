@@ -1,6 +1,8 @@
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { BadgeProvider } from "@/components/context/BadgeProvider";
+import { ThirdPartyEmoteProvider } from "@/components/context/ThirdPartyEmoteProvider";
 import { Colors } from "@/lib/constants/Colors";
+import { fetchGlobalEmotes } from "@/lib/message/emotes";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import * as Network from "expo-network";
@@ -56,17 +58,24 @@ const AuthenticatedLayout = () => {
 		queryFn: async () => await session!.apiClient.chat.getGlobalBadges(),
 	});
 
+	const globalEmotes = useQuery({
+		queryKey: ["emotes", "global"],
+		queryFn: async () => await fetchGlobalEmotes(),
+	});
+
 	return (
 		<BadgeProvider badges={globalBadges.data ?? []}>
-			<Stack
-				screenOptions={{
-					headerShown: false,
-					contentStyle: { backgroundColor: Colors.background },
-				}}
-			>
-				<Stack.Screen name="index" />
-				<Stack.Screen name="chat/[login]" />
-			</Stack>
+			<ThirdPartyEmoteProvider emotes={globalEmotes.data ?? {}}>
+				<Stack
+					screenOptions={{
+						headerShown: false,
+						contentStyle: { backgroundColor: Colors.background },
+					}}
+				>
+					<Stack.Screen name="index" />
+					<Stack.Screen name="chat/[login]" />
+				</Stack>
+			</ThirdPartyEmoteProvider>
 		</BadgeProvider>
 	);
 };

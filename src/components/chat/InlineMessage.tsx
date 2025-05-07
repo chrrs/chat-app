@@ -1,12 +1,13 @@
 import { Colors } from "@/lib/constants/Colors";
 import type { Badge, ChatMessage } from "@/lib/irc/chat";
-import type { Segment } from "@/lib/irc/segmenter";
-import { segmentMessage } from "@/lib/irc/segmenter";
+import type { Segment } from "@/lib/message/segmenter";
+import { segmentMessage } from "@/lib/message/segmenter";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useMemo } from "react";
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useBadges } from "../context/BadgeProvider";
+import { useThirdPartyEmotes } from "../context/ThirdPartyEmoteProvider";
 
 const BadgeImage = ({ badge }: { badge: Badge }) => {
 	const badges = useBadges();
@@ -56,7 +57,12 @@ interface Props {
 }
 
 export const InlineMessage = ({ message, isReply }: Props) => {
-	const segments = useMemo(() => segmentMessage(message, isReply ?? false), [message, isReply]);
+	const emotes = useThirdPartyEmotes();
+
+	const segments = useMemo(
+		() => segmentMessage(message, isReply ?? false, emotes),
+		[message, isReply, emotes],
+	);
 
 	return (
 		<Text style={styles.message}>
