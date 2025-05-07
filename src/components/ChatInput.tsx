@@ -25,6 +25,7 @@ export const ChatInput = ({ onSend }: Props) => {
 				ref={input}
 				style={styles.input}
 				placeholder="Send message..."
+				placeholderTextColor={Colors.hiddenText}
 				onChangeText={setTypedMessage}
 				onSubmitEditing={send}
 				submitBehavior="submit"

@@ -3,10 +3,11 @@ import { Colors } from "@/lib/constants/Colors";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { ResponseType, makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import { useRouter } from "expo-router";
+import * as Linking from "expo-linking";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -43,17 +44,37 @@ export default function () {
 		discovery,
 	);
 
-	async function promptAuth() {
-		const result = await promptAsync();
-		if (result.type === "success") {
-			setToken(result.params.access_token);
-
+	const finishAuth = useCallback(
+		(token: string) => {
+			setToken(token);
 			client.invalidateQueries();
 			client.clear();
-
 			router.replace("/");
-		}
+		},
+		[setToken, client, router],
+	);
+
+	// Workaround for https://github.com/expo/expo/issues/23781.
+	if (Platform.OS === "android") {
+		const url = Linking.useURL();
+		useEffect(() => {
+			if (!url) return;
+
+			const hash = new URL(url).hash;
+			if (!hash.startsWith("#access_token=")) return;
+			const token = hash.substring("&access_token=".length).split("&", 2)[0];
+			if (!token) return;
+
+			finishAuth(token);
+		}, [url, finishAuth]);
 	}
+
+	const promptAuth = useCallback(async () => {
+		const result = await promptAsync({ showInRecents: true });
+		if (result.type === "success") {
+			finishAuth(result.params.access_token);
+		}
+	}, [promptAsync, finishAuth]);
 
 	useEffect(() => {
 		WebBrowser.warmUpAsync();
