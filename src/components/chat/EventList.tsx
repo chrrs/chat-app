@@ -41,6 +41,13 @@ export const EventList = ({ style, events }: Props) => {
 		setAtBottom(true);
 	}
 
+	function showMessageWithId(id: string) {
+		const index = shownEvents.findIndex((event) => "message" in event && event.message?.id === id);
+		if (index === -1) return;
+
+		list.current?.scrollToIndex({ animated: true, viewPosition: 0.5, index });
+	}
+
 	return (
 		<View style={style}>
 			<FlashList
@@ -54,7 +61,7 @@ export const EventList = ({ style, events }: Props) => {
 				renderItem={({ item }) => (
 					<View style={{ opacity: (item.historical ? 0.6 : 1.0) * (item.deleted ? 0.3 : 1.0) }}>
 						{item.type === "message" ? (
-							<ChatMessage event={item} />
+							<ChatMessage event={item} onClickReply={showMessageWithId} />
 						) : item.type === "usernotice" ? (
 							<UserNotice event={item} />
 						) : (

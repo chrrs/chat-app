@@ -1,20 +1,23 @@
 import { Colors } from "@/lib/constants/Colors";
 import type { Event } from "@/lib/irc/chat";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { InlineMessage } from "./InlineMessage";
 
 interface Props {
 	event: Event.Message;
+	onClickReply?: (id: string) => void;
 }
 
-export const ChatMessage = ({ event }: Props) => {
+export const ChatMessage = ({ event, onClickReply }: Props) => {
 	return (
 		<View style={styles.root}>
 			{event.replyTo && (
-				<Text style={styles.parent} numberOfLines={1}>
-					<Text style={styles.parentAuthor}>{`${event.replyTo.author.name}: `}</Text>
-					{event.replyTo.text}
-				</Text>
+				<TouchableOpacity activeOpacity={0.5} onPress={() => onClickReply?.(event.replyTo!.id)}>
+					<Text style={styles.parent} numberOfLines={1}>
+						<Text style={styles.parentAuthor}>{`${event.replyTo.author.name}: `}</Text>
+						{event.replyTo.text}
+					</Text>
+				</TouchableOpacity>
 			)}
 
 			<InlineMessage message={event.message} isReply={event.replyTo !== undefined} />
