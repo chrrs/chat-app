@@ -192,16 +192,6 @@ export class TwitchIrcClient extends Emittery<ClientEvents> {
 	}
 
 	/**
-	 * Send a message to a channel
-	 * @param channel Channel name (without the # prefix)
-	 * @param message Message to send
-	 */
-	public say(channel: string, message: string): void {
-		const normalizedChannel = channel.toLowerCase();
-		this.send(`PRIVMSG #${normalizedChannel} :${message}`);
-	}
-
-	/**
 	 * Send a raw IRC command
 	 * @param message Raw IRC command
 	 */

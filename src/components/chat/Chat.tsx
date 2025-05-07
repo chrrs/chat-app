@@ -16,7 +16,7 @@ interface Props {
 
 export const Chat = ({ user, style }: Props) => {
 	const session = useTwitchAuth((state) => state.session);
-	const { events, sendMessage } = useChat(user.name);
+	const { events, sendMessage } = useChat(user);
 
 	const channelBadges = useQuery({
 		queryKey: ["badges", "channel", user.id],

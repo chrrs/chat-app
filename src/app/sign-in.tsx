@@ -34,7 +34,6 @@ export default function () {
 			redirectUri: proxyRedirectUri(),
 			scopes: [
 				"chat:read",
-				"chat:edit",
 				"user:read:chat",
 				"user:write:chat",
 				"user:read:emotes",

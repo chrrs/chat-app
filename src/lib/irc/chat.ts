@@ -1,3 +1,4 @@
+import type { HelixUser } from "@twurple/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type Message, parse } from "tekko";
 import { useTwitchAuth } from "../store/auth";
@@ -275,7 +276,7 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 	}
 }
 
-export function useChat(login: string) {
+export function useChat(channel: HelixUser) {
 	const [events, setEvents] = useState<Event.All[]>([]);
 	const eventsRef = useRef<Event.All[]>([]);
 
@@ -284,9 +285,13 @@ export function useChat(login: string) {
 	// Send a message to the chat.
 	const sendMessage = useCallback(
 		(message: string) => {
-			session?.ircClient?.say(login, message);
+			session!.apiClient.asUser(session!.userId, async (ctx) => {
+				ctx.chat
+					.sendChatMessage(channel, message)
+					.catch((error) => pushSystemMessage(`Failed to send chat message, ${error}`));
+			});
 		},
-		[login, session],
+		[channel, session],
 	);
 
 	// Push new events to the list, limiting the size to 1000.
@@ -382,7 +387,7 @@ export function useChat(login: string) {
 	const fetchOldMessages = useCallback(
 		async (after: number) => {
 			const query = new URLSearchParams({ before: Date.now().toString(), after: after.toString() });
-			const url = `https://recent-messages.robotty.de/api/v2/recent-messages/${login}?${query}`;
+			const url = `https://recent-messages.robotty.de/api/v2/recent-messages/${channel.name}?${query}`;
 
 			// FIXME: handle errors.
 			const res = await fetch(url)
@@ -399,7 +404,7 @@ export function useChat(login: string) {
 				pushEvents(events, true);
 			}
 		},
-		[login, pushEvents],
+		[channel, pushEvents],
 	);
 
 	useEffect(() => {
@@ -426,15 +431,15 @@ export function useChat(login: string) {
 			session!.ircClient.on("ready", handleReady);
 		});
 
-		session!.ircClient.join(login);
+		session!.ircClient.join(channel.name);
 
 		return () => {
-			session!.ircClient.part(login);
+			session!.ircClient.part(channel.name);
 			session!.ircClient.off("disconnected", handleDisconnect);
 			session!.ircClient.off("message", handleMessage);
 			session!.ircClient.off("ready", handleReady);
 		};
-	}, [session, login, fetchOldMessages, handleIrcMessage, pushSystemMessage]);
+	}, [session, channel, fetchOldMessages, handleIrcMessage, pushSystemMessage]);
 
 	return { events, pushSystemMessage, sendMessage };
 }
