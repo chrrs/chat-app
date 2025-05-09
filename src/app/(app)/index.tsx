@@ -1,26 +1,13 @@
+import { FollowedButton } from "@/components/FollowedButton";
 import { Header } from "@/components/Header";
-import { StreamButton } from "@/components/StreamButton";
 import { IconButton } from "@/components/ui/IconButton";
-import { useRefetchByUser } from "@/lib/hooks/useRefetchByUser";
 import { useTwitchAuth } from "@/lib/store/auth";
-import { useQuery } from "@tanstack/react-query";
 import { DoorOpenIcon } from "lucide-react-native";
-import { Alert, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function () {
-	const session = useTwitchAuth((state) => state.session);
 	const signOut = useTwitchAuth((state) => state.signOut);
-
-	const streams = useQuery({
-		queryKey: ["streams"],
-		queryFn: async () => {
-			const res = session!.apiClient.streams.getFollowedStreamsPaginated(session!.userId);
-			return await res.getAll();
-		},
-	});
-
-	const { isRefetchingByUser, refetchByUser } = useRefetchByUser(streams.refetch);
 
 	const trySignOut = () => {
 		Alert.alert("Sign out?", "You'll have to log back in with your Twitch account", [
@@ -34,15 +21,9 @@ export default function () {
 			<View style={styles.root}>
 				<Header left={<IconButton icon={DoorOpenIcon} onPress={trySignOut} />} title="Home" />
 
-				<ScrollView
-					style={styles.scroller}
-					refreshControl={
-						<RefreshControl onRefresh={refetchByUser} refreshing={isRefetchingByUser} />
-					}
-				>
+				<ScrollView style={styles.scroller}>
 					<SafeAreaView edges={["bottom"]}>
-						{streams.status === "success" &&
-							streams.data.map((stream) => <StreamButton key={stream.id} stream={stream} />)}
+						<FollowedButton />
 					</SafeAreaView>
 				</ScrollView>
 			</View>
