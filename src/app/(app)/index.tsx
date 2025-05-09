@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { StreamButton } from "@/components/StreamButton";
 import { IconButton } from "@/components/ui/IconButton";
+import { useRefetchByUser } from "@/lib/hooks/useRefetchByUser";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import { DoorOpenIcon } from "lucide-react-native";
@@ -19,6 +20,8 @@ export default function () {
 		},
 	});
 
+	const { isRefetchingByUser, refetchByUser } = useRefetchByUser(streams.refetch);
+
 	const trySignOut = () => {
 		Alert.alert("Sign out?", "You'll have to log back in with your Twitch account", [
 			{ text: "Cancel", style: "cancel" },
@@ -34,7 +37,7 @@ export default function () {
 				<ScrollView
 					style={styles.scroller}
 					refreshControl={
-						<RefreshControl onRefresh={streams.refetch} refreshing={streams.isFetching} />
+						<RefreshControl onRefresh={refetchByUser} refreshing={isRefetchingByUser} />
 					}
 				>
 					<SafeAreaView edges={["bottom"]}>
