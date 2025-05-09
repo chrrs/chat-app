@@ -7,7 +7,7 @@ export const FollowedButton = () => {
 	return (
 		<Link href="/followed" asChild>
 			<TouchableOpacity style={styles.pressable} activeOpacity={0.5}>
-				<CatIcon />
+				<CatIcon color={Colors.normalText} />
 				<Text style={styles.text}>Followed Channels</Text>
 			</TouchableOpacity>
 		</Link>

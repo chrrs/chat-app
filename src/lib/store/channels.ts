@@ -4,6 +4,7 @@ import { AsyncStorage } from "./storage";
 
 interface ChannelsStore {
 	channels: string[];
+	getChannels(): string[];
 	addChannel: (channel: string) => void;
 	removeChannel: (channel: string) => void;
 }
@@ -12,6 +13,7 @@ export const useChannels = create<ChannelsStore>()(
 	persist(
 		(set, get) => ({
 			channels: [],
+			getChannels: () => get().channels,
 			addChannel: (channel: string) => {
 				const normalizedChannel = channel.toLowerCase();
 				if (!get().channels.includes(normalizedChannel)) {

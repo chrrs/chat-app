@@ -1,6 +1,7 @@
 import { FollowedButton } from "@/components/FollowedButton";
 import { Header } from "@/components/Header";
 import { StreamButton } from "@/components/StreamButton";
+import { SwipeToDelete } from "@/components/SwipeToDelete";
 import { IconButton } from "@/components/ui/IconButton";
 import { useRefetchByUser } from "@/lib/hooks/useRefetchByUser";
 import { useTwitchAuth } from "@/lib/store/auth";
@@ -14,16 +15,16 @@ export default function () {
 	const signOut = useTwitchAuth((state) => state.signOut);
 	const session = useTwitchAuth((state) => state.session);
 
-	const { channels, addChannel } = useChannels();
+	const { channels, getChannels, addChannel, removeChannel } = useChannels();
 
 	const users = useQuery({
 		queryKey: ["home", "users"],
-		queryFn: async () => await session!.apiClient.users.getUsersByNames(channels),
+		queryFn: async () => await session!.apiClient.users.getUsersByNames(getChannels()),
 	});
 
 	const streams = useQuery({
 		queryKey: ["home", "streams"],
-		queryFn: async () => await session!.apiClient.streams.getStreamsByUserNames(channels),
+		queryFn: async () => await session!.apiClient.streams.getStreamsByUserNames(getChannels()),
 	});
 
 	const refetchAll = async () => await Promise.all([streams.refetch(), users.refetch()]);
@@ -62,12 +63,13 @@ export default function () {
 						<FollowedButton />
 
 						{channels.map((channel) => (
-							<StreamButton
-								key={channel}
-								login={channel}
-								user={users.data?.find((user) => user.name === channel)}
-								stream={streams.data?.find((stream) => stream.userName === channel)}
-							/>
+							<SwipeToDelete key={channel} onDelete={() => removeChannel(channel)}>
+								<StreamButton
+									login={channel}
+									user={users.data?.find((user) => user.name === channel)}
+									stream={streams.data?.find((stream) => stream.userName === channel)}
+								/>
+							</SwipeToDelete>
 						))}
 					</SafeAreaView>
 				</ScrollView>
