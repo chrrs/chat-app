@@ -30,6 +30,20 @@ export default function () {
 	const refetchAll = async () => await Promise.all([streams.refetch(), users.refetch()]);
 	const { isRefetchingByUser, refetchByUser } = useRefetchByUser(refetchAll);
 
+	// Sort channels first by online status, then by number of viewers, and finally by display name
+	const sortedChannels = [...channels].sort((a, b) => {
+		const aStream = streams.data?.find((stream) => stream.userName === a);
+		const bStream = streams.data?.find((stream) => stream.userName === b);
+
+		if (aStream && !bStream) return -1;
+		if (!aStream && bStream) return 1;
+
+		if ((aStream?.viewers ?? 0) > (bStream?.viewers ?? 0)) return -1;
+		if ((aStream?.viewers ?? 0) < (bStream?.viewers ?? 0)) return 1;
+
+		return a.localeCompare(b);
+	});
+
 	const trySignOut = () => {
 		Alert.alert("Sign out?", "You'll have to log back in with your Twitch account", [
 			{ text: "Cancel", style: "cancel" },
@@ -62,7 +76,7 @@ export default function () {
 					<SafeAreaView edges={["bottom"]}>
 						<FollowedButton />
 
-						{channels.map((channel) => (
+						{sortedChannels.map((channel) => (
 							<SwipeToDelete key={channel} onDelete={() => removeChannel(channel)}>
 								<StreamButton
 									login={channel}
