@@ -1,4 +1,5 @@
 import {
+	QueryCache,
 	QueryClient,
 	QueryClientProvider,
 	focusManager,
@@ -9,7 +10,11 @@ import { Slot } from "expo-router";
 import { useEffect } from "react";
 import { AppState, type AppStateStatus, Platform } from "react-native";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: console.error,
+	}),
+});
 
 onlineManager.setEventListener((setOnline) => {
 	const eventSubscription = Network.addNetworkStateListener((state) => {
