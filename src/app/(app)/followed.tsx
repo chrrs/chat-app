@@ -16,7 +16,7 @@ export default function () {
 	const session = useTwitchAuth((state) => state.session);
 
 	const streams = useQuery({
-		queryKey: ["streams"],
+		queryKey: ["followed", "streams"],
 		queryFn: async () => {
 			const res = session!.apiClient.streams.getFollowedStreamsPaginated(session!.userId);
 			return await res.getAll();
@@ -44,8 +44,9 @@ export default function () {
 						}
 					>
 						<SafeAreaView edges={["bottom"]}>
-							{streams.status === "success" &&
-								streams.data.map((stream) => <StreamButton key={stream.id} stream={stream} />)}
+							{streams.data.map((stream) => (
+								<StreamButton key={stream.id} login={stream.userName} stream={stream} />
+							))}
 						</SafeAreaView>
 					</ScrollView>
 				)}

@@ -3,7 +3,7 @@ import { type AuthProvider, StaticAuthProvider, type TokenInfo, getTokenInfo } f
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { TwitchIrcClient } from "../irc/client";
-import { SecureStorage } from "./secureStorage";
+import { SecureStorage } from "./storage";
 
 type Status = "hydrating" | "authenticating" | "ready";
 

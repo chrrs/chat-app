@@ -12,6 +12,7 @@
 		"format": "biome check --write ."
 	},
 	"dependencies": {
+		"@react-native-async-storage/async-storage": "2.1.2",
 		"@shopify/flash-list": "1.7.6",
 		"@tanstack/react-query": "^5.75.5",
 		"@twurple/api": "^7.3.0",

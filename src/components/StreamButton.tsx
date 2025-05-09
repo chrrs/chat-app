@@ -1,39 +1,39 @@
 import { Colors } from "@/lib/constants/Colors";
-import type { HelixStream } from "@twurple/api";
+import type { HelixStream, HelixUser } from "@twurple/api";
 import { Link } from "expo-router";
 import { User } from "lucide-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
-	stream: HelixStream;
+	login: string;
+	user?: HelixUser;
+	stream?: HelixStream;
 }
 
-export const StreamButton = ({ stream }: Props) => {
+export const StreamButton = ({ login, user, stream }: Props) => {
+	const displayName = user?.displayName ?? stream?.userDisplayName;
+
 	return (
-		<Link
-			href={{
-				pathname: "/chat/[login]",
-				params: { login: stream.userName, displayName: stream.userDisplayName },
-			}}
-			asChild
-		>
+		<Link href={{ pathname: "/chat/[login]", params: { login, displayName } }} asChild>
 			<TouchableOpacity style={styles.pressable} activeOpacity={0.5}>
 				<View style={styles.header}>
-					<Text style={styles.name}>{stream.userDisplayName}</Text>
+					<Text style={styles.name}>{displayName ?? login}</Text>
 
-					<View style={styles.viewersWrapper}>
-						<Text style={{ color: Colors.viewersText }}>
-							{stream.viewers.toLocaleString("en-US")}
-						</Text>
-						<User size={16} color={Colors.viewersText} />
-					</View>
+					{stream && (
+						<View style={styles.viewersWrapper}>
+							<Text style={{ color: Colors.viewersText }}>
+								{stream.viewers.toLocaleString("en-US")}
+							</Text>
+							<User size={16} color={Colors.viewersText} />
+						</View>
+					)}
 				</View>
 
 				<Text numberOfLines={2} style={styles.title}>
-					{stream.title}
+					{stream?.title || "offline"}
 				</Text>
 
-				<Text style={styles.game}>{stream.gameName}</Text>
+				{stream && <Text style={styles.game}>{stream.gameName}</Text>}
 			</TouchableOpacity>
 		</Link>
 	);
@@ -68,12 +68,12 @@ const styles = StyleSheet.create({
 
 	title: {
 		color: Colors.normalText,
-		marginBottom: 4,
 	},
 
 	game: {
 		color: Colors.mutedText,
 		fontWeight: "bold",
 		fontSize: 12,
+		marginTop: 4,
 	},
 });
