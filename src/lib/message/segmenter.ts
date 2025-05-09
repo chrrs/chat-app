@@ -112,7 +112,7 @@ export function segmentMessage(
 				aspectRatio: 1,
 			});
 
-			if (start !== 0) segments.push({ type: "text", content: " " });
+			if (end !== text.length) segments.push({ type: "text", content: " " });
 			start += word.length + 1;
 		}
 
