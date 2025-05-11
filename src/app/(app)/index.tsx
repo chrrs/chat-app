@@ -8,6 +8,7 @@ import { useTwitchAuth } from "@/lib/store/auth";
 import { useChannels } from "@/lib/store/channels";
 import { useQuery } from "@tanstack/react-query";
 import { DoorOpenIcon, PlusIcon } from "lucide-react-native";
+import { useCallback, useEffect } from "react";
 import { Alert, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,20 +16,30 @@ export default function () {
 	const signOut = useTwitchAuth((state) => state.signOut);
 	const session = useTwitchAuth((state) => state.session);
 
-	const { channels, getChannels, addChannel, removeChannel } = useChannels();
+	const { channels, addChannel, removeChannel } = useChannels();
 
 	const users = useQuery({
 		queryKey: ["home", "users"],
-		queryFn: async () => await session!.apiClient.users.getUsersByNames(getChannels()),
+		queryFn: async () => await session!.apiClient.users.getUsersByNames(channels),
 	});
 
 	const streams = useQuery({
 		queryKey: ["home", "streams"],
-		queryFn: async () => await session!.apiClient.streams.getStreamsByUserNames(getChannels()),
+		queryFn: async () => await session!.apiClient.streams.getStreamsByUserNames(channels),
 	});
 
-	const refetchAll = async () => await Promise.all([streams.refetch(), users.refetch()]);
+	const refetchAll = useCallback(
+		async () => await Promise.all([streams.refetch(), users.refetch()]),
+		[streams.refetch, users.refetch],
+	);
+
 	const { isRefetchingByUser, refetchByUser } = useRefetchByUser(refetchAll);
+
+	// Refetch here instead of in the query to avoid throwing away the cache.
+	useEffect(() => {
+		channels;
+		refetchAll();
+	}, [channels, refetchAll]);
 
 	// Sort channels first by online status, then by number of viewers, and finally by display name
 	const sortedChannels = [...channels].sort((a, b) => {
@@ -55,7 +66,6 @@ export default function () {
 		Alert.prompt("Add channel", "Enter the Twitch username of the channel", (login) => {
 			if (login.trim().length === 0) return;
 			addChannel(login);
-			refetchAll();
 		});
 	};
 
