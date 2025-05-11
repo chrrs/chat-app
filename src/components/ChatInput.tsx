@@ -25,7 +25,7 @@ export const ChatInput = ({ onSend }: Props) => {
 				ref={input}
 				style={styles.input}
 				placeholder="Send message..."
-				placeholderTextColor={Colors.hiddenText}
+				placeholderTextColor={Colors.text.hidden}
 				onChangeText={setTypedMessage}
 				onSubmitEditing={send}
 				submitBehavior="submit"
@@ -40,7 +40,7 @@ export const ChatInput = ({ onSend }: Props) => {
 				disabled={!canSend}
 				activeOpacity={0.5}
 			>
-				<SendHorizonalIcon color={canSend ? Colors.normalText : Colors.hiddenText} />
+				<SendHorizonalIcon color={canSend ? Colors.text.normal : Colors.text.hidden} />
 			</TouchableOpacity>
 		</View>
 	);
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
 
 	input: {
 		flex: 1,
-		color: Colors.normalText,
-		backgroundColor: Colors.inputBackground,
+		color: Colors.widget.secondary.foreground,
+		backgroundColor: Colors.widget.secondary.background,
 		borderRadius: 8,
 		padding: 8,
 	},

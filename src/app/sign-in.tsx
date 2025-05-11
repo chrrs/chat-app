@@ -111,6 +111,6 @@ const styles = StyleSheet.create({
 	redirectUri: {
 		marginTop: 8,
 		textAlign: "center",
-		color: Colors.hiddenText,
+		color: Colors.text.hidden,
 	},
 });

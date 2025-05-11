@@ -12,7 +12,7 @@ export const CenteredSpinner = ({ text }: { text: string }) => {
 
 const styles = StyleSheet.create({
 	root: {
-		backgroundColor: Colors.background,
+		backgroundColor: Colors.background.normal,
 
 		display: "flex",
 		flexDirection: "row",
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 	},
 
 	label: {
-		color: Colors.mutedText,
+		color: Colors.text.muted,
 		textAlign: "center",
 	},
 });

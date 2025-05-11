@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 export const CenteredError = ({ text }: { text: string }) => {
 	return (
 		<View style={styles.root}>
-			<CircleXIcon color={Colors.errorText} />
+			<CircleXIcon color={Colors.text.error} />
 			<Text style={styles.label}>{text}</Text>
 		</View>
 	);
@@ -13,7 +13,7 @@ export const CenteredError = ({ text }: { text: string }) => {
 
 const styles = StyleSheet.create({
 	root: {
-		backgroundColor: Colors.background,
+		backgroundColor: Colors.background.normal,
 
 		display: "flex",
 		flexDirection: "row",
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 	},
 
 	label: {
-		color: Colors.errorText,
+		color: Colors.text.error,
 		textAlign: "center",
 	},
 });

@@ -10,14 +10,14 @@ interface Props {
 export const IconButton = ({ icon: Icon, onPress }: Props) => {
 	return (
 		<TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.5}>
-			<Icon color={Colors.normalText} />
+			<Icon color={Colors.text.normal} />
 		</TouchableOpacity>
 	);
 };
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: Colors.inputBackground,
+		backgroundColor: Colors.widget.secondary.background,
 		borderRadius: 8,
 		padding: 4,
 	},

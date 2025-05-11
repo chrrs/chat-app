@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 
 	parent: {
-		color: Colors.mutedText,
+		color: Colors.text.muted,
 		fontSize: 12,
 		marginLeft: 8,
 	},

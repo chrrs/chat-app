@@ -69,7 +69,7 @@ const AuthenticatedLayout = () => {
 				<Stack
 					screenOptions={{
 						headerShown: false,
-						contentStyle: { backgroundColor: Colors.background },
+						contentStyle: { backgroundColor: Colors.background.normal },
 					}}
 				>
 					<Stack.Screen name="index" />

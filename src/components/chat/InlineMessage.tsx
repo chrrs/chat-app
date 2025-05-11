@@ -86,7 +86,7 @@ export const InlineMessage = ({ message, isReply }: Props) => {
 
 const styles = StyleSheet.create({
 	message: {
-		color: Colors.normalText,
+		color: Colors.text.normal,
 	},
 
 	name: {
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
 	},
 
 	url: {
-		color: Colors.hyperlink,
+		color: Colors.text.hyperlink,
 		textDecorationLine: "underline",
 	},
 });

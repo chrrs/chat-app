@@ -1,3 +1,4 @@
+import { Colors } from "@/lib/constants/Colors";
 import * as Haptics from "expo-haptics";
 import { TrashIcon } from "lucide-react-native";
 import { useRef } from "react";
@@ -27,7 +28,7 @@ const RightAction = (_progress: SharedValue<number>, dragX: SharedValue<number>)
 	return (
 		<View style={styles.actionRoot}>
 			<Animated.View style={[styles.rightAction, animatedStyle]}>
-				<TrashIcon color="white" />
+				<TrashIcon color={Colors.delete.foreground} />
 			</Animated.View>
 		</View>
 	);
@@ -72,6 +73,6 @@ const styles = StyleSheet.create({
 	rightAction: {
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "red",
+		backgroundColor: Colors.delete.background,
 	},
 });

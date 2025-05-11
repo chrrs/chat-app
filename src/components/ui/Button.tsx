@@ -9,16 +9,15 @@ interface Props {
 }
 
 export const Button = ({ type, disabled, onPress, children }: Props) => {
-	const bg = type === "primary" ? Colors.primaryBackground : Colors.secondaryBackground;
-	const fg = type === "primary" ? "white" : Colors.normalText;
+	const colors = type === "primary" ? Colors.widget.primary : Colors.widget.secondary;
 
 	return (
 		<TouchableOpacity
-			style={[styles.button, { opacity: disabled ? 0.5 : 1.0, backgroundColor: bg }]}
+			style={[styles.button, { opacity: disabled ? 0.5 : 1.0, backgroundColor: colors.background }]}
 			activeOpacity={0.5}
 			onPress={onPress}
 		>
-			<Text style={[styles.text, { color: fg }]}>{children}</Text>
+			<Text style={[styles.text, { color: colors.foreground }]}>{children}</Text>
 		</TouchableOpacity>
 	);
 };

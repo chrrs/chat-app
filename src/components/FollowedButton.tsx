@@ -7,7 +7,7 @@ export const FollowedButton = () => {
 	return (
 		<Link href="/followed" asChild>
 			<TouchableOpacity style={styles.pressable} activeOpacity={0.5}>
-				<CatIcon color={Colors.normalText} />
+				<CatIcon color={Colors.text.normal} />
 				<Text style={styles.text}>Followed Channels</Text>
 			</TouchableOpacity>
 		</Link>
@@ -24,11 +24,11 @@ const styles = StyleSheet.create({
 		paddingVertical: 12,
 
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.secondaryButtonBackground,
+		borderBottomColor: Colors.background.secondary,
 	},
 
 	text: {
-		color: Colors.normalText,
+		color: Colors.text.normal,
 		fontSize: 16,
 		fontWeight: "bold",
 	},

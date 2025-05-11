@@ -21,10 +21,10 @@ export const StreamButton = ({ login, user, stream }: Props) => {
 
 					{stream && (
 						<View style={styles.viewersWrapper}>
-							<Text style={{ color: Colors.viewersText }}>
+							<Text style={{ color: Colors.text.viewers }}>
 								{stream.viewers.toLocaleString("en-US")}
 							</Text>
-							<User size={16} color={Colors.viewersText} />
+							<User size={16} color={Colors.text.viewers} />
 						</View>
 					)}
 				</View>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 12,
 
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.secondaryButtonBackground,
+		borderBottomColor: Colors.widget.secondary.background,
 	},
 
 	header: {
@@ -61,17 +61,17 @@ const styles = StyleSheet.create({
 	},
 
 	name: {
-		color: Colors.normalText,
+		color: Colors.text.normal,
 		fontWeight: "bold",
 		marginBottom: 4,
 	},
 
 	title: {
-		color: Colors.normalText,
+		color: Colors.text.normal,
 	},
 
 	game: {
-		color: Colors.mutedText,
+		color: Colors.text.muted,
 		fontWeight: "bold",
 		fontSize: 12,
 		marginTop: 4,

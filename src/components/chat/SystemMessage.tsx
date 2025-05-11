@@ -12,7 +12,7 @@ export const SystemMessage = ({ event }: Props) => {
 
 const styles = StyleSheet.create({
 	message: {
-		color: Colors.mutedText,
+		color: Colors.text.muted,
 
 		paddingHorizontal: 12,
 		paddingVertical: 3,

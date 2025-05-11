@@ -19,11 +19,11 @@ export const UserNotice = ({ event }: Props) => {
 
 const styles = StyleSheet.create({
 	root: {
-		borderColor: Colors.noticeBorder,
+		borderColor: Colors.notice.border,
 		borderLeftWidth: 4,
 		borderRightWidth: 4,
 
-		backgroundColor: Colors.noticeBackground,
+		backgroundColor: Colors.notice.background,
 
 		paddingHorizontal: 8,
 		paddingVertical: 4,
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
 	},
 
 	title: {
-		color: Colors.normalText,
+		color: Colors.text.normal,
 		fontWeight: "bold",
 	},
 });

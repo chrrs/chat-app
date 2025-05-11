@@ -88,11 +88,11 @@ const styles = StyleSheet.create({
 
 		paddingVertical: 4,
 
-		backgroundColor: Colors.bottomButtonBackground,
+		backgroundColor: Colors.goToBottom.background,
 	},
 
 	bottomText: {
-		color: Colors.bottomButtonText,
+		color: Colors.goToBottom.foreground,
 		textAlign: "center",
 	},
 });
