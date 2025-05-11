@@ -53,6 +53,7 @@ export default function () {
 
 	const tryAddChannel = () => {
 		Alert.prompt("Add channel", "Enter the Twitch username of the channel", (login) => {
+			if (login.trim().length === 0) return;
 			addChannel(login);
 			refetchAll();
 		});
