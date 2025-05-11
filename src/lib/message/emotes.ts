@@ -60,6 +60,7 @@ interface FfzEmoteSet {
 		name: string;
 		width: number;
 		height: number;
+		animated?: Record<string, string>;
 		urls: Record<string, string>;
 	}[];
 }
@@ -71,7 +72,7 @@ function parseFfzEmotes(sets: FfzEmoteSet[]): Record<string, ThirdPartyEmote> {
 				emote.name,
 				{
 					name: emote.name,
-					imageUrl: emote.urls["2"],
+					imageUrl: emote.animated?.["2"] ?? emote.urls["2"],
 					aspectRatio: emote.width / emote.height,
 				},
 			]),
