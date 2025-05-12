@@ -111,8 +111,9 @@ export async function fetchChannelEmotes(
 	providers: Provider[] = ["bttv", "ffz"],
 ): Promise<Record<string, ThirdPartyEmote>> {
 	const fetchers = {
-		bttv: () => fetchBttvChannelEmotes(user),
-		ffz: () => fetchFfzChannelEmotes(user),
+		// FIXME: handle these errors properly.
+		bttv: () => fetchBttvChannelEmotes(user).catch(console.warn),
+		ffz: () => fetchFfzChannelEmotes(user).catch(console.warn),
 	};
 
 	const results = await Promise.all(providers.map((provider) => fetchers[provider]()));
@@ -123,8 +124,9 @@ export async function fetchGlobalEmotes(
 	providers: Provider[] = ["bttv", "ffz"],
 ): Promise<Record<string, ThirdPartyEmote>> {
 	const fetchers = {
-		bttv: fetchBttvGlobalEmotes,
-		ffz: fetchFfzGlobalEmotes,
+		// FIXME: handle these errors properly.
+		bttv: () => fetchBttvGlobalEmotes().catch(console.warn),
+		ffz: () => fetchFfzGlobalEmotes().catch(console.warn),
 	};
 
 	const results = await Promise.all(providers.map((provider) => fetchers[provider]()));
