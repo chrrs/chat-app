@@ -3,6 +3,9 @@
 		"scheme": "chat-app",
 		"userInterfaceStyle": "automatic",
 		"newArchEnabled": true,
+		"experiments": {
+			"reactCompiler": true
+		},
 		"ios": {
 			"supportsTablet": true
 		},
