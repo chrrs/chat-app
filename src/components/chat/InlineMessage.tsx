@@ -66,10 +66,17 @@ export const InlineMessage = ({ message, isReply }: Props) => {
 
 	return (
 		<Text style={styles.message}>
-			{message.author.badges.map((badge) => (
-				<BadgeImage key={badge.set} badge={badge} />
-			))}
-			<Text style={[styles.name, { color: message.author.color }]}>{message.author.name}:</Text>
+			<Link
+				href={{
+					pathname: "/user/[login]",
+					params: { login: message.author.login, channel: message.channel.login },
+				}}
+			>
+				{message.author.badges.map((badge) => (
+					<BadgeImage key={badge.set} badge={badge} />
+				))}
+				<Text style={[styles.name, { color: message.author.color }]}>{message.author.name}:</Text>
+			</Link>
 			{/* Space between name and message */}{" "}
 			{segments.map((segment, index) =>
 				segment.type === "emote" ? (

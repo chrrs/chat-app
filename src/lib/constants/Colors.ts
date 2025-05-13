@@ -14,7 +14,8 @@ export const Colors = Platform.select({
 		background: {
 			normal: PlatformColor("systemBackground"),
 			primary: PlatformColor("systemPurple"),
-			secondary: PlatformColor("systemGray6"),
+			secondary: PlatformColor("secondarySystemBackground"),
+			tertiary: PlatformColor("tertiarySystemBackground"),
 		},
 
 		notice: {

@@ -74,6 +74,7 @@ const AuthenticatedLayout = () => {
 				>
 					<Stack.Screen name="index" />
 					<Stack.Screen name="chat/[login]" />
+					<Stack.Screen name="user/[login]" options={{ presentation: "modal" }} />
 				</Stack>
 			</ThirdPartyEmoteProvider>
 		</BadgeProvider>

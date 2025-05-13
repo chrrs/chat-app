@@ -18,6 +18,7 @@ export interface ChatMessage {
 	author: User;
 	emotes: Emote[];
 	text: string;
+	channel: { login: string };
 }
 
 export interface Badge {
@@ -109,6 +110,8 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 	const historical = msg.tags?.historical === "1";
 	const deleted = msg.tags?.["rm-deleted"] === "1";
 
+	const channel = { login: msg.params[0].substring(1) };
+
 	// Common base properties
 	const base = {
 		id,
@@ -149,6 +152,7 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 				author,
 				emotes: parseEmotes(tags.emotes),
 				text: messageText,
+				channel,
 			};
 
 			// Parse bits if they exist
@@ -170,6 +174,7 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 					},
 					emotes: [], // We don't have emote info for the parent message
 					text: tags["reply-parent-msg-body"] ?? "",
+					channel,
 				};
 			}
 
@@ -206,6 +211,7 @@ function ircToEvent(msg: Message<TwitchIrcTags>): Event.All | null {
 					author,
 					emotes: parseEmotes(tags.emotes),
 					text: messageContent,
+					channel,
 				};
 			}
 

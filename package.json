@@ -17,6 +17,7 @@
 		"@tanstack/react-query": "^5.75.5",
 		"@twurple/api": "^7.3.0",
 		"@twurple/auth": "^7.3.0",
+		"dayjs": "^1.11.13",
 		"emittery": "^1.1.0",
 		"expo": "~53.0.8",
 		"expo-auth-session": "~6.1.5",
