@@ -8,7 +8,7 @@ import type { HelixUser } from "@twurple/api";
 import dayjs from "dayjs";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
-import { CircleXIcon, HeartIcon, StarIcon } from "lucide-react-native";
+import { BoxIcon, CircleXIcon, HeartIcon, StarIcon } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,7 +22,7 @@ const UserProfile = ({ user }: { user: HelixUser }) => {
 	);
 };
 
-const ChannelStatus = ({ status }: { status: SubAgeResponse }) => {
+const ChannelStatus = ({ user, status }: { user: HelixUser; status: SubAgeResponse }) => {
 	if (status.statusHidden) {
 		return (
 			<View style={styles.channelStatus}>
@@ -33,6 +33,15 @@ const ChannelStatus = ({ status }: { status: SubAgeResponse }) => {
 
 	return (
 		<View style={styles.channelStatus}>
+			{/* Account creation date */}
+			<View style={styles.age}>
+				<BoxIcon color={Colors.text.normal} size={16} />
+				<Text style={{ color: Colors.text.normal }}>
+					Account created on{" "}
+					<Text style={styles.bold}>{dayjs(user.creationDate).format("MMMM D, YYYY")}</Text>.
+				</Text>
+			</View>
+
 			{/* Follow age */}
 			<View style={styles.age}>
 				<HeartIcon color={Colors.text.normal} size={16} />
@@ -108,7 +117,7 @@ export default function () {
 					</Text>
 				</View>
 			) : (
-				<ChannelStatus status={status.data} />
+				<ChannelStatus user={user.data} status={status.data} />
 			)}
 		</SafeAreaView>
 	);
@@ -147,7 +156,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		color: Colors.text.normal,
 		alignItems: "center",
-		gap: 4,
+		gap: 6,
 	},
 
 	bold: {
