@@ -3,6 +3,7 @@ import * as Haptics from "expo-haptics";
 import { TrashIcon } from "lucide-react-native";
 import { useRef } from "react";
 import { StyleSheet, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated, {
 	runOnJS,
@@ -52,15 +53,17 @@ export const SwipeToDelete = ({ children, onDelete }: Props) => {
 	};
 
 	return (
-		<Animated.View ref={root} style={animatedStyle}>
-			<Swipeable
-				cancelsTouchesInView={false}
-				renderRightActions={RightAction}
-				onSwipeableWillOpen={handleDelete}
-			>
-				{children}
-			</Swipeable>
-		</Animated.View>
+		<GestureHandlerRootView onMoveShouldSetResponder={() => true}>
+			<Animated.View ref={root} style={animatedStyle}>
+				<Swipeable
+					cancelsTouchesInView={false}
+					renderRightActions={RightAction}
+					onSwipeableWillOpen={handleDelete}
+				>
+					{children}
+				</Swipeable>
+			</Animated.View>
+		</GestureHandlerRootView>
 	);
 };
 

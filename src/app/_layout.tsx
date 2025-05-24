@@ -9,7 +9,6 @@ import * as Network from "expo-network";
 import { Slot } from "expo-router";
 import { useEffect } from "react";
 import { AppState, type AppStateStatus, Platform } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient({
 	queryCache: new QueryCache({
@@ -38,10 +37,8 @@ export default function () {
 	}, []);
 
 	return (
-		<GestureHandlerRootView onMoveShouldSetResponder={() => true}>
-			<QueryClientProvider client={queryClient}>
-				<Slot />
-			</QueryClientProvider>
-		</GestureHandlerRootView>
+		<QueryClientProvider client={queryClient}>
+			<Slot />
+		</QueryClientProvider>
 	);
 }
