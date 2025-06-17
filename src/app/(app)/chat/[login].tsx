@@ -1,14 +1,14 @@
-import { CenteredError } from "@/components/CenteredError";
-import { CenteredSpinner } from "@/components/CenteredSpinner";
-import { Header } from "@/components/Header";
-import { KeyboardAvoidingSafeView } from "@/components/KeyboardAvoidingSafeView";
-import { Chat } from "@/components/chat/Chat";
-import { IconButton } from "@/components/ui/IconButton";
-import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeftIcon } from "lucide-react-native";
 import { StyleSheet, View } from "react-native";
+import { CenteredError } from "@/components/CenteredError";
+import { CenteredSpinner } from "@/components/CenteredSpinner";
+import { Chat } from "@/components/chat/Chat";
+import { Header } from "@/components/Header";
+import { KeyboardAvoidingSafeView } from "@/components/KeyboardAvoidingSafeView";
+import { IconButton } from "@/components/ui/IconButton";
+import { useTwitchAuth } from "@/lib/store/auth";
 
 export default function () {
 	const router = useRouter();

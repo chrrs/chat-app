@@ -1,5 +1,5 @@
 import { ApiClient } from "@twurple/api";
-import { type AuthProvider, StaticAuthProvider, type TokenInfo, getTokenInfo } from "@twurple/auth";
+import { type AuthProvider, getTokenInfo, StaticAuthProvider, type TokenInfo } from "@twurple/auth";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { TwitchIrcClient } from "../irc/client";

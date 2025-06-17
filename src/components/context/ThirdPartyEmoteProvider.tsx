@@ -1,5 +1,5 @@
-import type { ThirdPartyEmote } from "@/lib/message/emotes";
 import React, { useContext } from "react";
+import type { ThirdPartyEmote } from "@/lib/message/emotes";
 
 const ThirdPartyEmoteContext = React.createContext<Record<string, ThirdPartyEmote> | null>(null);
 

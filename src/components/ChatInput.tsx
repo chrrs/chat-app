@@ -1,7 +1,7 @@
-import { Colors } from "@/lib/constants/Colors";
 import { SendHorizonalIcon } from "lucide-react-native";
 import { useCallback, useRef, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	onSend: (message: string) => void;

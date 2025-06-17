@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { DoorOpenIcon, PlusIcon } from "lucide-react-native";
+import { useCallback, useEffect } from "react";
+import { Alert, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { FollowedButton } from "@/components/FollowedButton";
 import { Header } from "@/components/Header";
 import { StreamButton } from "@/components/StreamButton";
@@ -6,11 +11,6 @@ import { IconButton } from "@/components/ui/IconButton";
 import { useRefetchByUser } from "@/lib/hooks/useRefetchByUser";
 import { useTwitchAuth } from "@/lib/store/auth";
 import { useChannels } from "@/lib/store/channels";
-import { useQuery } from "@tanstack/react-query";
-import { DoorOpenIcon, PlusIcon } from "lucide-react-native";
-import { useCallback, useEffect } from "react";
-import { Alert, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function () {
 	const signOut = useTwitchAuth((state) => state.signOut);

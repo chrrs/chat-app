@@ -1,9 +1,9 @@
 import {
+	focusManager,
+	onlineManager,
 	QueryCache,
 	QueryClient,
 	QueryClientProvider,
-	focusManager,
-	onlineManager,
 } from "@tanstack/react-query";
 import * as Network from "expo-network";
 import { Slot } from "expo-router";

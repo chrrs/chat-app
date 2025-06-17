@@ -1,6 +1,6 @@
+import { StyleSheet, Text } from "react-native";
 import { Colors } from "@/lib/constants/Colors";
 import type { Event } from "@/lib/irc/chat";
-import { StyleSheet, Text } from "react-native";
 
 interface Props {
 	event: Event.SystemMessage;

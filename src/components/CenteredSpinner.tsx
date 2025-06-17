@@ -1,5 +1,5 @@
-import { Colors } from "@/lib/constants/Colors";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 export const CenteredSpinner = ({ text }: { text: string }) => {
 	return (

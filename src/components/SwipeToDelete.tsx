@@ -1,4 +1,3 @@
-import { Colors } from "@/lib/constants/Colors";
 import * as Haptics from "expo-haptics";
 import { TrashIcon } from "lucide-react-native";
 import { useRef } from "react";
@@ -7,11 +6,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated, {
 	runOnJS,
+	type SharedValue,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
-	type SharedValue,
 } from "react-native-reanimated";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	children: React.ReactNode;

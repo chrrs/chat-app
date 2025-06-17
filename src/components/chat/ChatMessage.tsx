@@ -1,6 +1,6 @@
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Colors } from "@/lib/constants/Colors";
 import type { Event } from "@/lib/irc/chat";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { InlineMessage } from "./InlineMessage";
 
 interface Props {

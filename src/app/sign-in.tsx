@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/Button";
-import { Colors } from "@/lib/constants/Colors";
-import { useTwitchAuth } from "@/lib/store/auth";
 import { useQueryClient } from "@tanstack/react-query";
-import { ResponseType, makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import { makeRedirectUri, ResponseType, useAuthRequest } from "expo-auth-session";
 import * as Linking from "expo-linking";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components/ui/Button";
+import { Colors } from "@/lib/constants/Colors";
+import { useTwitchAuth } from "@/lib/store/auth";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -55,7 +55,10 @@ export default function () {
 
 	// Workaround for https://github.com/expo/expo/issues/23781.
 	if (Platform.OS === "android") {
+		// biome-ignore lint/correctness/useHookAtTopLevel: Platform.OS is constant.
 		const url = Linking.useURL();
+
+		// biome-ignore lint/correctness/useHookAtTopLevel: Platform.OS is constant.
 		useEffect(() => {
 			if (!url) return;
 

@@ -1,4 +1,4 @@
-import { type UserNameResolvable, extractUserName } from "@twurple/api";
+import { extractUserName, type UserNameResolvable } from "@twurple/api";
 
 export type SubAgeResponse = {
 	followedAt: string | null;

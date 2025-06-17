@@ -288,18 +288,6 @@ export function useChat(channel: HelixUser) {
 
 	const session = useTwitchAuth((state) => state.session);
 
-	// Send a message to the chat.
-	const sendMessage = useCallback(
-		(message: string) => {
-			session!.apiClient.asUser(session!.userId, async (ctx) => {
-				ctx.chat
-					.sendChatMessage(channel, message)
-					.catch((error) => pushSystemMessage(`Failed to send chat message, ${error}`));
-			});
-		},
-		[channel, session],
-	);
-
 	// Push new events to the list, limiting the size to 1000.
 	const pushEvents = useCallback((events: Event.All[], sort = false) => {
 		setEvents((prev) => {
@@ -325,6 +313,18 @@ export function useChat(channel: HelixUser) {
 				},
 			]),
 		[pushEvents],
+	);
+
+	// Send a message to the chat.
+	const sendMessage = useCallback(
+		(message: string) => {
+			session!.apiClient.asUser(session!.userId, async (ctx) => {
+				ctx.chat
+					.sendChatMessage(channel, message)
+					.catch((error) => pushSystemMessage(`Failed to send chat message, ${error}`));
+			});
+		},
+		[channel, session, pushSystemMessage],
 	);
 
 	// Handle incoming IRC messages.

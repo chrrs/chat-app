@@ -1,13 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
+import * as Network from "expo-network";
+import { Redirect, Stack } from "expo-router";
+import { useEffect } from "react";
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { BadgeProvider } from "@/components/context/BadgeProvider";
 import { ThirdPartyEmoteProvider } from "@/components/context/ThirdPartyEmoteProvider";
 import { Colors } from "@/lib/constants/Colors";
 import { fetchGlobalEmotes } from "@/lib/message/emotes";
 import { useTwitchAuth } from "@/lib/store/auth";
-import { useQuery } from "@tanstack/react-query";
-import * as Network from "expo-network";
-import { Redirect, Stack } from "expo-router";
-import { useEffect } from "react";
 
 export default function () {
 	const auth = useTwitchAuth();

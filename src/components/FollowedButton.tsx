@@ -1,7 +1,7 @@
-import { Colors } from "@/lib/constants/Colors";
 import { Link } from "expo-router";
 import { CatIcon } from "lucide-react-native";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 export const FollowedButton = () => {
 	return (

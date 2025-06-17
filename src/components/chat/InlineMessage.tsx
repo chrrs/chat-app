@@ -1,11 +1,11 @@
-import { Colors } from "@/lib/constants/Colors";
-import type { Badge, ChatMessage } from "@/lib/irc/chat";
-import type { Segment } from "@/lib/message/segmenter";
-import { segmentMessage } from "@/lib/message/segmenter";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
+import type { Badge, ChatMessage } from "@/lib/irc/chat";
+import type { Segment } from "@/lib/message/segmenter";
+import { segmentMessage } from "@/lib/message/segmenter";
 import { useBadges } from "../context/BadgeProvider";
 import { useThirdPartyEmotes } from "../context/ThirdPartyEmoteProvider";
 

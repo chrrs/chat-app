@@ -1,9 +1,9 @@
-import { useChat } from "@/lib/irc/chat";
-import { fetchChannelEmotes } from "@/lib/message/emotes";
-import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import type { HelixUser } from "@twurple/api";
 import { type StyleProp, StyleSheet, View, type ViewStyle } from "react-native";
+import { useChat } from "@/lib/irc/chat";
+import { fetchChannelEmotes } from "@/lib/message/emotes";
+import { useTwitchAuth } from "@/lib/store/auth";
 import { ChatInput } from "../ChatInput";
 import { BadgeProvider } from "../context/BadgeProvider";
 import { ThirdPartyEmoteProvider } from "../context/ThirdPartyEmoteProvider";

@@ -1,8 +1,8 @@
-import { Colors } from "@/lib/constants/Colors";
 import type { HelixStream, HelixUser } from "@twurple/api";
 import { Link } from "expo-router";
 import { User } from "lucide-react-native";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	login: string;

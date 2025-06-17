@@ -1,6 +1,6 @@
-import { Colors } from "@/lib/constants/Colors";
 import type { LucideIcon } from "lucide-react-native";
 import { StyleSheet, TouchableOpacity } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	icon: LucideIcon;

@@ -1,17 +1,16 @@
-import { CenteredError } from "@/components/CenteredError";
-import { CenteredSpinner } from "@/components/CenteredSpinner";
-import { Colors } from "@/lib/constants/Colors";
-import { type SubAgeResponse, fetchSubAge } from "@/lib/ivr";
-import { useTwitchAuth } from "@/lib/store/auth";
 import { useQuery } from "@tanstack/react-query";
 import type { HelixUser } from "@twurple/api";
 import dayjs from "dayjs";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { BoxIcon, CircleXIcon, HeartIcon, StarIcon } from "lucide-react-native";
-import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CenteredError } from "@/components/CenteredError";
+import { CenteredSpinner } from "@/components/CenteredSpinner";
+import { Colors } from "@/lib/constants/Colors";
+import { fetchSubAge, type SubAgeResponse } from "@/lib/ivr";
+import { useTwitchAuth } from "@/lib/store/auth";
 
 const UserProfile = ({ user }: { user: HelixUser }) => {
 	return (
@@ -65,7 +64,7 @@ const ChannelStatus = ({ user, status }: { user: HelixUser; status: SubAgeRespon
 								Subscribed at <Text style={styles.bold}>Tier {status.meta.tier}</Text>{" "}
 							</>
 						) : (
-							<>Previously subscribed </>
+							"Previously subscribed"
 						)}
 						for <Text style={styles.bold}>{status.cumulative.months} months</Text>.
 					</Text>
@@ -104,7 +103,7 @@ export default function () {
 
 			{/* Channel status */}
 			{!channel ? (
-				<></>
+				false
 			) : status.status === "pending" ? (
 				<View style={styles.channelStatus}>
 					<ActivityIndicator />

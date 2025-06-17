@@ -1,5 +1,5 @@
-import { Colors } from "@/lib/constants/Colors";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	type: "primary" | "secondary";

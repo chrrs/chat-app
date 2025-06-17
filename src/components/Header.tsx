@@ -1,6 +1,6 @@
-import { Colors } from "@/lib/constants/Colors";
 import type { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 interface Props {
 	left?: ReactNode;

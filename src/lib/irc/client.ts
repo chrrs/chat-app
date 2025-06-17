@@ -1,4 +1,4 @@
-import { type AuthProvider, InvalidTokenTypeError, getTokenInfo } from "@twurple/auth";
+import { type AuthProvider, getTokenInfo, InvalidTokenTypeError } from "@twurple/auth";
 import Emittery from "emittery";
 import { type Message, parse } from "tekko";
 import type { TwitchIrcTags } from "./types";
@@ -95,7 +95,7 @@ export class TwitchIrcClient extends Emittery<ClientEvents> {
 		};
 
 		// Handle errors
-		this.ws.onerror = (error) => {
+		this.ws.onerror = (_error) => {
 			this.emit("error", new Error("WebSocket error"));
 		};
 
@@ -253,7 +253,7 @@ export class TwitchIrcClient extends Emittery<ClientEvents> {
 
 				// Emit the parsed message
 				this.emit("message", parsed);
-			} catch (err) {
+			} catch (_err) {
 				this.emit("error", new Error(`Failed to parse message: ${msg}`));
 			}
 		}

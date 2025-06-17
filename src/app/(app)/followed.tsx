@@ -1,3 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import { ChevronLeftIcon } from "lucide-react-native";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { CenteredError } from "@/components/CenteredError";
 import { CenteredSpinner } from "@/components/CenteredSpinner";
 import { Header } from "@/components/Header";
@@ -5,11 +10,6 @@ import { StreamButton } from "@/components/StreamButton";
 import { IconButton } from "@/components/ui/IconButton";
 import { useRefetchByUser } from "@/lib/hooks/useRefetchByUser";
 import { useTwitchAuth } from "@/lib/store/auth";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import { ChevronLeftIcon } from "lucide-react-native";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function () {
 	const router = useRouter();

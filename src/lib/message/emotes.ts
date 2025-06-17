@@ -1,4 +1,4 @@
-import { type UserIdResolvable, extractUserId } from "@twurple/api";
+import { extractUserId, type UserIdResolvable } from "@twurple/api";
 
 export type Provider = "bttv" | "ffz";
 

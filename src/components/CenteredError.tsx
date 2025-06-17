@@ -1,6 +1,6 @@
-import { Colors } from "@/lib/constants/Colors";
 import { CircleXIcon } from "lucide-react-native";
 import { StyleSheet, Text, View } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
 
 export const CenteredError = ({ text }: { text: string }) => {
 	return (

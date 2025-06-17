@@ -1,5 +1,3 @@
-import { Colors } from "@/lib/constants/Colors";
-import type { Event } from "@/lib/irc/chat";
 import { FlashList } from "@shopify/flash-list";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -12,6 +10,8 @@ import {
 	View,
 	type ViewStyle,
 } from "react-native";
+import { Colors } from "@/lib/constants/Colors";
+import type { Event } from "@/lib/irc/chat";
 import { ChatMessage } from "./ChatMessage";
 import { SystemMessage } from "./SystemMessage";
 import { UserNotice } from "./UserNotice";
