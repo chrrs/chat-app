@@ -64,7 +64,7 @@ const ChannelStatus = ({ user, status }: { user: HelixUser; status: SubAgeRespon
 								Subscribed at <Text style={styles.bold}>Tier {status.meta.tier}</Text>{" "}
 							</>
 						) : (
-							"Previously subscribed"
+							"Previously subscribed "
 						)}
 						for <Text style={styles.bold}>{status.cumulative.months} months</Text>.
 					</Text>
